@@ -1,19 +1,20 @@
-package com.example.minyk.mapper;
+package com.example.minyk.reducer;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapperRecordEmitter implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MapperRecordEmitter.class);
+public class ReducerRecordEmitter implements Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReducerRecordEmitter.class);
     private final Text output_key = new Text();
     private final Text output_value = new Text();
-    private final Mapper.Context context;
+    private final Reducer.Context context;
 
-    public MapperRecordEmitter(Mapper.Context context) {
+    public ReducerRecordEmitter(Reducer.Context context) {
         this.context = context;
     }
 

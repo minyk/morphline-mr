@@ -18,7 +18,7 @@ import java.net.URL;
  */
 public class MorphlineMapperTest {
 
-    MapDriver<LongWritable, Text, Text, NullWritable> mapDriver;
+    MapDriver<LongWritable, Text, Text, Text> mapDriver;
 
     @Before
     public void setUp() {
@@ -33,8 +33,8 @@ public class MorphlineMapperTest {
 
     @Test
     public void testMapper() {
-        mapDriver.withInput(new LongWritable(1), new Text("Mar 12 12:27:00 server3 named[32172]: lame server resolving 'jakarta5.wasantara.net.id' (in 'wasantara.net.id'?): 202.159.65.171#53"));
-        mapDriver.withOutput(new Text("server3"), NullWritable.get());
+        mapDriver.withInput(new LongWritable(0), new Text("<164>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withOutput(new Text("syslog"), new Text("1"));
         try {
             mapDriver.runTest();
         } catch (IOException e) {

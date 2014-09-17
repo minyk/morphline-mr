@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>morphlines-mr</groupId>
     <artifactId>morphlines-mr</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>0.1</version>
 
     <properties>

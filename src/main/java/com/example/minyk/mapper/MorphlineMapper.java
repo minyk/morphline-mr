@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.example.minyk.MorphlineMRDriver;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -15,7 +16,7 @@ import org.kitesdk.morphline.base.Fields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MorphlineMapper extends Mapper<Object, Text, Text, NullWritable> {
+public class MorphlineMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Mapper.class);
     private final Record record = new Record();
     private Command morphline;

@@ -2,7 +2,6 @@ package com.example.minyk;
 
 import com.example.minyk.mapper.IgnoreKeyOutputFormat;
 import com.example.minyk.mapper.MorphlineMapper;
-import com.typesafe.config.ConfigException;
 import org.apache.commons.cli.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -11,7 +10,6 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -19,10 +17,8 @@ public class MorphlineMRDriver extends Configured implements Tool {
     public static final String MORPHLINE_FILE = "morphlineFile";
     public static final String MORPHLINE_ID = "morphlineId";
 
-    private Options opts;
-
     private Options buildOption() {
-        opts = new Options();
+        Options opts = new Options();
         Option mfile = new Option("f", "morphline-file", true, "target morphline file.");
         mfile.setRequired(true);
         opts.addOption(mfile);
@@ -37,7 +33,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
 
         Option output = new Option("o", "output", true, "output location");
         input.setRequired(true);
-        opts.addOption(input);
+        opts.addOption(output);
 
         return opts;
     }
@@ -65,5 +61,13 @@ public class MorphlineMRDriver extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(input_path));
         IgnoreKeyOutputFormat.setOutputPath(job, new Path(output_path));
         return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    public static void main(String[] args) {
+        try {
+            ToolRunner.run(new MorphlineMRDriver(), args );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

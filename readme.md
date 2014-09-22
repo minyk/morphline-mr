@@ -10,4 +10,4 @@ Morphline.conf contains all the magic.
 
 RecordEmitter is write the data for you. 
 
-This project inspired by SequenceIQ' Mapreduce sample. Thanks for a great example!
+This project is inspired by SequenceIQ' Mapreduce sample. Thanks for a great example!

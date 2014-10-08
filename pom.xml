@@ -10,6 +10,7 @@
 
     <properties>
         <kite-version>0.16.0</kite-version>
+        <hadoop-version>2.5.1</hadoop-version>
     </properties>
 
 
@@ -128,20 +129,8 @@
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>2.4.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
-            <version>2.4.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kitesdk</groupId>
-            <artifactId>kite-morphlines-json</artifactId>
-            <version>${kite-version}</version>
+            <version>${hadoop-version}</version>
         </dependency>
 
     </dependencies>

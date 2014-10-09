@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMapper.class);
+    public static final String EXCEPTION_KEY_FIELD = "exceptionkey";
     private final Record record = new Record();
     private Command morphline;
     boolean useReducers;
@@ -40,8 +41,11 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         record.put(Fields.ATTACHMENT_BODY, new ByteArrayInputStream(value.toString().getBytes()));
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Value: " + value.toString());
+        }
         if(useReducers) {
-            record.put("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
+            record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY);
         }
         if (!morphline.process(record)) {
             LOGGER.info("Morphline failed to process record: {}", record);

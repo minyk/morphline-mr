@@ -4,8 +4,6 @@ import com.example.minyk.mapper.IgnoreKeyOutputFormat;
 import com.example.minyk.mapper.MorphlineMapper;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.commons.cli.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -16,11 +14,13 @@ import org.apache.hadoop.mapreduce.MRConfig;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MorphlineMRDriver extends Configured implements Tool {
 
-    private static final Log logger = LogFactory.getLog(MorphlineMRDriver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMRDriver.class);
 
     public static final String MORPHLINE_FILE = "morphlineFile";
     public static final String MORPHLINE_ID = "morphlineId";
@@ -93,7 +93,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
         conf.set(MORPHLINE_ID, id);
 
         if (cmd.hasOption('l')) {
-            logger.info("Use local mode.");
+            LOGGER.info("Use local mode.");
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
         }
 
@@ -105,17 +105,17 @@ public class MorphlineMRDriver extends Configured implements Tool {
             int tr = Integer.parseInt(cmd.getOptionValue('n'), 10);
             int er = Integer.parseInt(cmd.getOptionValue('e'),2);
             if(er >= tr) {
-                logger.error("Total number of reducers should be larger than the number of exception reducers. " + tr + "is smaller than " + er + ".");
+                LOGGER.error("Total number of reducers should be larger than the number of exception reducers. " + tr + "is smaller than " + er + ".");
                 System.exit(1);
             }
-            logger.info("Use reducers: true");
-            logger.info("Total number of reducers: " + tr);
-            logger.info("Total number of exception reducers: " + er);
+            LOGGER.info("Use reducers: true");
+            LOGGER.info("Total number of reducers: " + tr);
+            LOGGER.info("Total number of exception reducers: " + er);
             job.setNumReduceTasks(tr);
             job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, er);
             job.setPartitionerClass(ExceptionPartitioner.class);
         } else {
-            logger.info("Use reducers: false");
+            LOGGER.info("Use reducers: false");
             job.setNumReduceTasks(0);
         }
 

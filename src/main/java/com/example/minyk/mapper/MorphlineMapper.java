@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 
 import com.example.minyk.MorphlineMRDriver;
+import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;
@@ -19,6 +21,7 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMapper.class);
     private final Record record = new Record();
     private Command morphline;
+    boolean useReducers;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -28,10 +31,18 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()
                 .compile(morphLineFile, morphLineId, morphlineContext, recordEmitter);
+        if(context.getConfiguration().getInt(MRJobConfig.NUM_REDUCES,0) == 0) {
+            useReducers = false;
+        } else {
+            useReducers = true;
+        }
     }
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         record.put(Fields.ATTACHMENT_BODY, new ByteArrayInputStream(value.toString().getBytes()));
+        if(useReducers) {
+            record.put("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
+        }
         if (!morphline.process(record)) {
             LOGGER.info("Morphline failed to process record: {}", record);
         }

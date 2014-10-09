@@ -94,6 +94,7 @@
             <groupId>org.apache.mrunit</groupId>
             <artifactId>mrunit</artifactId>
             <classifier>hadoop2</classifier>
+            <scope>test</scope>
             <version>1.1.0</version>
         </dependency>
 
@@ -120,11 +121,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.flume</groupId>
-            <artifactId>flume-ng-core</artifactId>
-            <version>1.5.0.1</version>
         </dependency>
 
         <dependency>

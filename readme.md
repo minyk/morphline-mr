@@ -33,6 +33,6 @@ In the morphline config files, use this value to key when exception is thrown. F
 
 See https://github.com/minyk/morphline-mr/wiki/Grok-with-tryRules
 
-## Acknowledgement
+## Acknowledgements
 
 This project is inspired by SequenceIQ' Mapreduce sample. Thanks for a great example!

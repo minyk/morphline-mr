@@ -31,47 +31,8 @@ If number of reducers is not 0, the driver sets ExceptionPartitioner and Identit
 
 In the morphline config files, use this value to key when exception is thrown. For normal records, proper value should be set in key field for partitioning.
 
-```
-      {
-        tryRules {
-          rules : [
-            # first try
-            {
-              commands : [
-                {
-                  grok {
-                    dictionaryResources : [grok-dictionaries/grok-patterns, grok-dictionaries/linux-syslog]
-                    dictionaryString : """
-                     SYSLOG5424NGNAME %{WORD:syslog5424_appname1}-%{WORD:syslog5424_appname2}
-                     SYSLOG5424BASE1 %{SYSLOG5424PRI}%{NONNEGINT:syslog5424_ver} +(?:%{TIMESTAMP_ISO8601:syslog5424_ts}|-) +(?:%{HOSTNAME:syslog5424_host}|-) +(?:%{SYSLOG5424NGNAME:syslog5424_app}) +(?:%{WORD:syslog5424_proc}|-) +(?:%{WORD:syslog5424_msgid}|-) +(?:%{SYSLOG5424SD:syslog5424_sd}|-|)
-                     SYSLOG5424LINE1 %{SYSLOG5424BASE1} +%{GREEDYDATA:syslog5424_msg}
-                    """
-                    expressions : {
-                      message : """<%{POSINT:syslog_pri}>%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"""
-                    }
-                  }
-                }
-              ]
-            }
+See https://github.com/minyk/morphline-mr/wiki/Grok-with-tryRules
 
-            # oops. 
-            {
-              commands : [
-                {
-                      {
-                        setValues {
-                          key : "@{exceptionkey}"
-                          value : "@{__attachment_body}"
-                        }
-                      }                    
-                }
-              ]
-            }
-          ]
-        }
-      }
-```
-
-## Acknowledgement
+## Acknowledgements
 
 This project is inspired by SequenceIQ' Mapreduce sample. Thanks for a great example!

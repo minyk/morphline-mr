@@ -1,7 +1,7 @@
 package com.example.minyk.mapper;
 
 import com.example.minyk.MorphlineMRDriver;
-import org.apache.hadoop.conf.Configuration;
+import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -23,17 +23,29 @@ public class MorphlineMapperTest {
     public void setUp() {
         MorphlineMapper mapper = new MorphlineMapper();
         mapDriver = MapDriver.newMapDriver(mapper);
-        URL file = MorphlineMapperTest.class.getClassLoader().getResource("morphline.conf");
-        Configuration conf = new Configuration();
-        conf.set(MorphlineMRDriver.MORPHLINE_FILE,file.getPath());
-        conf.set(MorphlineMRDriver.MORPHLINE_ID,"morphline1");
-        mapDriver.setConfiguration(conf);
+        URL file = MorphlineMapperTest.class.getClassLoader().getResource("morphline_with_exception.conf");
+        mapDriver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_FILE,file.getPath());
+        mapDriver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_ID, "morphline1");
+        mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
     }
 
     @Test
-    public void testMapper() {
+    public void testNormalCase() {
+        mapDriver.clearInput();
         mapDriver.withInput(new LongWritable(0), new Text("<164>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         mapDriver.withOutput(new Text("syslog,sshd"), new Text("1"));
+        try {
+            mapDriver.runTest();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testExceptionCase() {
+        mapDriver.clearInput();
+        mapDriver.withInput(new LongWritable(0), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withOutput(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         try {
             mapDriver.runTest();
         } catch (IOException e) {

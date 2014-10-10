@@ -14,7 +14,7 @@ public class IdentityReducer extends Reducer<Text,Text,NullWritable,Text>{
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         for(Text t : values) {
-            context.write(null,t);
+            context.write(NullWritable.get(),t);
         }
     }
 }

@@ -6,6 +6,7 @@ import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.commons.cli.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -81,6 +82,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
         String id = cmd.getOptionValue('m');
         String input_path = cmd.getOptionValue('i');
         String output_path = cmd.getOptionValue('o');
+
         String job_name = "";
         if(cmd.hasOption('j')) {
             job_name = cmd.getOptionValue('j');
@@ -122,8 +124,21 @@ public class MorphlineMRDriver extends Configured implements Tool {
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(Text.class);
         job.setOutputFormatClass(IgnoreKeyOutputFormat.class);
+
+        Path outputPath = new Path(output_path);
+        FileSystem fs = FileSystem.get(job.getConfiguration());
+        try {
+            if(fs.exists(outputPath)) {
+                fs.delete(outputPath, true);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            System.exit(1);
+        }
+
         FileInputFormat.addInputPath(job, new Path(input_path));
-        IgnoreKeyOutputFormat.setOutputPath(job, new Path(output_path));
+        IgnoreKeyOutputFormat.setOutputPath(job, outputPath);
+
         return job.waitForCompletion(true) ? 0 : 1;
     }
 

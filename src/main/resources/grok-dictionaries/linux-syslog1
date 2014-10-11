@@ -1,0 +1,3 @@
+SYSLOG5424NGNAME %{WORD:syslog5424_appname1}-%{WORD:syslog5424_appname2}
+SYSLOG5424BASE1 %{SYSLOG5424PRI}%{NONNEGINT:syslog5424_ver} +(?:%{TIMESTAMP_ISO8601:syslog5424_ts}|-) +(?:%{HOSTNAME:syslog5424_host}|-) +(?:%{SYSLOG5424NGNAME:syslog5424_app}) +(?:%{WORD:syslog5424_proc}|-) +(?:%{WORD:syslog5424_msgid}|-) +(?:%{SYSLOG5424SD:syslog5424_sd}|-|)
+SYSLOG5424LINE1 %{SYSLOG5424BASE1} +%{GREEDYDATA:syslog5424_msg}

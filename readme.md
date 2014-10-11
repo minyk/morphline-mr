@@ -13,6 +13,17 @@ morphline.conf contains all the magic.
 
 RecordEmitter is write the data for you. 
 
+## Getting Started
+
+```
+$ git clone https://github.com/minyk/morphline-mr.git
+$ mvn package
+$ yarn jar target/morphline-mr-0.1-jar-with-dependencies.jar -f morphline_with_exception.conf -m morphline1 -i file:///var/log/messages -o file:///root/test/ -l
+```
+* This command read local syslog file at /var/log/message, then output will be located at /root/test
+ * The output file is full of '1' line.
+* morphline_with_exception.conf is found in src/main/resource/conf. In later version, bin.tar.gz with all the resources will be provided.
+
 ## Options
 
 - "-f" or "--morphline-file" indicates which mophline configuration file is used for.

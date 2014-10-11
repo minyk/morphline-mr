@@ -6,6 +6,7 @@ import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.commons.cli.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -97,6 +98,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
         if (cmd.hasOption('l')) {
             LOGGER.info("Use local mode.");
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
+            conf.set(CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY, CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT);
         }
 
         Job job = Job.getInstance(conf, job_name);

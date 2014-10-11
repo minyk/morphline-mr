@@ -106,8 +106,8 @@ public class MorphlineMRDriver extends Configured implements Tool {
         job.setMapperClass(MorphlineMapper.class);
 
         if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {
-            int tr = Integer.parseInt(cmd.getOptionValue('n'), 10);
-            int er = Integer.parseInt(cmd.getOptionValue('e'),2);
+            int tr = Integer.parseInt(cmd.getOptionValue('n', "10"));
+            int er = Integer.parseInt(cmd.getOptionValue('e', "2"));
             if(er >= tr) {
                 LOGGER.error("Total number of reducers should be larger than the number of exception reducers. " + tr + "is smaller than " + er + ".");
                 System.exit(1);

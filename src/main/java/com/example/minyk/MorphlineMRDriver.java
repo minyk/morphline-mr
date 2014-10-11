@@ -118,6 +118,8 @@ public class MorphlineMRDriver extends Configured implements Tool {
             job.setNumReduceTasks(tr);
             job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, er);
             job.setPartitionerClass(ExceptionPartitioner.class);
+            job.setMapOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(Text.class);
         } else {
             LOGGER.info("Use reducers: false");
             job.setNumReduceTasks(0);

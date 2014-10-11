@@ -3,9 +3,9 @@ MapReduce with Morphlines
 
 ## Introduction
 
-Morphlne-MR is a simple hadoop map only job for some ETLs. It reads the input data from the Hdfs and do a morphline processing, then write files to the Hdfs. 
+Morphlne-MR is a simple hadoop mapreduce job for some ETLs. It reads the input data from the Hdfs and do a morphline processing, then write files to the Hdfs. 
 
-Morphline.conf contains all the magic.
+morphline.conf contains all the magic.
 * Read data from _attachment_body field
 * Grok the string. At this time, input data is splitted up to fields. 
 * Each fields are mutable after grok command.
@@ -24,6 +24,10 @@ RecordEmitter is write the data for you.
 - "-e" or "--exception-reducers" describes total number of reducers for exception cases. Default is 2.
 - "-j" or "--job-name" the name of the job. Default is "Data_Cleaning_Job".
 - "-l" or "--local-mode" Use local mode instead of YARN(MRv2) or Classic(MRv1). Use this option for testing purpose.
+
+## Map only job
+
+If one of 'r' or 'n' or 'e' option are not provided, the driver run map-only job. In this case, unparsable records should be dropped with dropRecord command. 
 
 ## How to use Exception Partitioner
 

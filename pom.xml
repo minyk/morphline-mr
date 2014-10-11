@@ -28,6 +28,9 @@
                         </goals>
                         <inherited>true</inherited>
                         <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
                             <finalName>morphline-mr-${project.version}</finalName>
                             <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
                             <appendAssemblyId>true</appendAssemblyId>
@@ -35,9 +38,6 @@
                                 <descriptor>src/main/assembly/bin.xml</descriptor>
                             </descriptors>
                             <tarLongFileMode>gnu</tarLongFileMode>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
                         </configuration>
                     </execution>
                 </executions>
@@ -66,16 +66,16 @@
         </plugins>
     </build>
 
-  <repositories>
-      <repository>
+    <repositories>
+        <repository>
             <id>cdh.repo</id>
-                  <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
-                        <name>Cloudera Repositories</name>
-                              <snapshots>
-                                      <enabled>false</enabled>
-                                            </snapshots>
-                                                </repository>
-                                                  </repositories>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+            <name>Cloudera Repositories</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>

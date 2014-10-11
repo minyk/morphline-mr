@@ -32,8 +32,8 @@ public class MorphlineMapperTest {
     @Test
     public void testNormalCase() {
         mapDriver.clearInput();
-        mapDriver.withInput(new LongWritable(0), new Text("<164>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
-        mapDriver.withOutput(new Text("syslog,sshd"), new Text("1"));
+        mapDriver.withInput(new LongWritable(0), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withOutput(new Text("syslog,sshd"), new Text("2943974000,syslog,sshd,listening on 0.0.0.0 port 22."));
         try {
             mapDriver.runTest();
         } catch (IOException e) {
@@ -44,8 +44,8 @@ public class MorphlineMapperTest {
     @Test
     public void testExceptionCase() {
         mapDriver.clearInput();
-        mapDriver.withInput(new LongWritable(0), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
-        mapDriver.withOutput(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withInput(new LongWritable(0), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withOutput(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         try {
             mapDriver.runTest();
         } catch (IOException e) {

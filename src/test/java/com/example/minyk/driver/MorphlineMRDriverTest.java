@@ -34,8 +34,8 @@ public class MorphlineMRDriverTest {
 
     @Test
     public void testNormalCase() {
-        driver.withInput(new LongWritable(0), new Text("<164>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
-        driver.withOutput(NullWritable.get(), new Text("1"));
+        driver.withInput(new LongWritable(0), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        driver.withOutput(NullWritable.get(), new Text("2943974000,syslog,sshd,listening on 0.0.0.0 port 22."));
         try {
             driver.runTest();
         } catch (IOException e) {
@@ -45,8 +45,8 @@ public class MorphlineMRDriverTest {
 
     @Test
     public void testExceptionCase() {
-        driver.withInput(new LongWritable(0), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
-        driver.withOutput(NullWritable.get(), new Text("Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        driver.withInput(new LongWritable(0), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        driver.withOutput(NullWritable.get(), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         try {
             driver.runTest();
         } catch (IOException e) {

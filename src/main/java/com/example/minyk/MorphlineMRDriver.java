@@ -4,11 +4,10 @@ import com.example.minyk.mapper.IgnoreKeyOutputFormat;
 import com.example.minyk.mapper.MorphlineMapper;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.commons.cli.*;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -18,6 +17,10 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.URI;
+import java.util.Iterator;
 
 
 public class MorphlineMRDriver extends Configured implements Tool {
@@ -64,6 +67,11 @@ public class MorphlineMRDriver extends Configured implements Tool {
         Option local = new Option("l", "local-mode", false, "Use local mode.");
         local.setRequired(false);
         opts.addOption(local);
+
+        Option dictionaries = new Option("d", "grok-dictionaries", true, "grok dictionaries.");
+        dictionaries.setRequired(false);
+        opts.addOption(dictionaries);
+
         return opts;
     }
 
@@ -91,8 +99,12 @@ public class MorphlineMRDriver extends Configured implements Tool {
             job_name = "Data_Cleaning_Job";
         }
 
-        Configuration conf = this.getConf();
-        conf.set(MORPHLINE_FILE, filename);
+        Job job = Job.getInstance(this.getConf(), job_name);
+        job.setJarByClass(MorphlineMRDriver.class);
+        job.setMapperClass(MorphlineMapper.class);
+
+        Configuration conf = job.getConfiguration();
+        // conf.set(MORPHLINE_FILE, filename);
         conf.set(MORPHLINE_ID, id);
 
         if (cmd.hasOption('l')) {
@@ -101,9 +113,26 @@ public class MorphlineMRDriver extends Configured implements Tool {
             conf.set(CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY, CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT);
         }
 
-        Job job = Job.getInstance(conf, job_name);
-        job.setJarByClass(MorphlineMRDriver.class);
-        job.setMapperClass(MorphlineMapper.class);
+        LocalFileSystem lfs = FileSystem.getLocal(job.getConfiguration());
+
+        // Add morphline file to distributed cache
+        Path morphlinefile = new Path(filename);
+
+        job.addCacheFile(morphlinefile.toUri());
+        job.getConfiguration().set(MORPHLINE_FILE, morphlinefile.getName());
+
+//        if(cmd.hasOption('d')) {
+//            // Add grok dictionaries to distributed cache
+//            Path grokdic = new Path(cmd.getOptionValue('d'));
+//            if (lfs.isDirectory(grokdic)) {
+//                for(RemoteIterator<LocatedFileStatus> iter = lfs.listFiles(grokdic,false); iter.hasNext(); ) {
+//                    LocatedFileStatus fileStatus = iter.next();
+//                    job.addFileToClassPath(fileStatus.getPath());
+//                }
+//            } else {
+//                job.addCacheFile(grokdic.toUri());
+//            }
+//        }
 
         if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {
             int tr = Integer.parseInt(cmd.getOptionValue('n', "10"));
@@ -138,6 +167,8 @@ public class MorphlineMRDriver extends Configured implements Tool {
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             System.exit(1);
+        } finally {
+            fs.close();
         }
 
         FileInputFormat.addInputPath(job, new Path(input_path));

@@ -6,10 +6,10 @@ MapReduce with Morphlines
 Morphlne-MR is a simple hadoop mapreduce job for some ETLs. It reads the input data from the Hdfs and do a morphline processing, then write files to the Hdfs. 
 
 morphline.conf contains all the magic.
-* Read data from _attachment_body field
+* Read data from `_attachment_body` field
 * Grok the string. At this time, input data is splitted up to fields. 
 * Each fields are mutable after grok command.
-* At the end of process, set the "value" field. 
+* At the end of process, set the `value` field. 
 
 RecordEmitter is write the data for you. 
 
@@ -18,11 +18,11 @@ RecordEmitter is write the data for you.
 ```
 $ git clone https://github.com/minyk/morphline-mr.git
 $ mvn package
-$ yarn jar target/morphline-mr-0.1-jar-with-dependencies.jar -f morphline_with_exception.conf -m morphline1 -i file:///var/log/messages -o file:///root/test/ -l
+$ yarn jar target/morphline-mr-*-jar-with-dependencies.jar -f morphline_with_exception.conf -m morphline1 -i file:///var/log/messages -o file:///root/test/ -l
 ```
-* This command read local syslog file at /var/log/message, then output will be located at /root/test
+* This command read local syslog file at `/var/log/message`, then output will be located at `/root/test`
  * The output file is full of '1' line.
-* morphline_with_exception.conf is found in src/main/resource/conf. In later version, bin.tar.gz with all the resources will be provided.
+* `morphline_with_exception.conf` is found in src/main/resource/conf. In later version, bin.tar.gz with all the resources will be provided.
 
 ## Options
 
@@ -42,7 +42,7 @@ If one of 'r' or 'n' or 'e' option are not provided, the driver run map-only job
 
 ## How to use Exception Partitioner
 
-If number of reducers is not 0, the driver sets ExceptionPartitioner and IdentityReducer. In this case, morphline records have "exceptionkey" field for value of exception key.
+If number of reducers is not 0, the driver sets ExceptionPartitioner and IdentityReducer. In this case, morphline records have `exceptionkey` field for value of exception key.
 
 In the morphline config files, use this value to key when exception is thrown. For normal records, proper value should be set in key field for partitioning.
 

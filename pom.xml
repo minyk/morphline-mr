@@ -6,7 +6,7 @@
     <groupId>morphlines-mr</groupId>
     <artifactId>morphlines-mr</artifactId>
     <packaging>jar</packaging>
-    <version>0.2</version>
+    <version>0.2.1</version>
 
     <properties>
         <kite-version>0.17.0</kite-version>

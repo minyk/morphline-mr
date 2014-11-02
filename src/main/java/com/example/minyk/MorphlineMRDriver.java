@@ -10,13 +10,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.CounterGroup;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.MRConfig;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -106,21 +105,20 @@ public class MorphlineMRDriver extends Configured implements Tool {
         job.setMapperClass(MorphlineMapper.class);
 
         Configuration conf = job.getConfiguration();
-        // conf.set(MORPHLINE_FILE, filename);
         conf.set(MORPHLINE_ID, id);
 
         if (cmd.hasOption('l')) {
             LOGGER.info("Use local mode.");
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
             conf.set(CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY, CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT);
-        }
+            conf.set(MORPHLINE_FILE, filename);
+        } else {
 
-        // Add morphline file to distributed cache
-        Path morphlinefile = new Path(filename);
-
-        job.addCacheFile(morphlinefile.toUri());
-        job.getConfiguration().set(MORPHLINE_FILE, morphlinefile.getName());
-
+            // Add morphline file to distributed cache
+//            LocalFileSystem fs = FileSystem.getLocal(conf);
+            Path morphlinefile = new Path(filename);
+            job.addCacheFile(morphlinefile.toUri());
+            conf.set(MORPHLINE_FILE, morphlinefile.getName());
 //        if(cmd.hasOption('d')) {
 //            // Add grok dictionaries to distributed cache
 //            Path grokdic = new Path(cmd.getOptionValue('d'));
@@ -133,6 +131,8 @@ public class MorphlineMRDriver extends Configured implements Tool {
 //                job.addCacheFile(grokdic.toUri());
 //            }
 //        }
+        }
+
 
         if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {
             int tr = Integer.parseInt(cmd.getOptionValue('n', "10"));
@@ -198,8 +198,9 @@ public class MorphlineMRDriver extends Configured implements Tool {
         if(job.isSuccessful()) {
             LOGGER.info("Job Status: Successful.");
             CounterGroup counterGroup = job.getCounters().getGroup(MorphlinesMRCounters.COUNTERGROUP);
+            String groupname = counterGroup.getDisplayName();
             for(Counter c : counterGroup) {
-                LOGGER.info(c.getDisplayName() + "=" + c.getValue());
+                LOGGER.info(groupname + "." +c.getDisplayName() + "=" + c.getValue());
             }
         } else {
             LOGGER.info("Job Status: " + job.getStatus().toString());

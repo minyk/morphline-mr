@@ -1,5 +1,6 @@
 package com.example.minyk;
 
+import com.example.minyk.counter.MorphlinesMRCounters;
 import com.example.minyk.mapper.IgnoreKeyOutputFormat;
 import com.example.minyk.mapper.MorphlineMapper;
 import com.example.minyk.partitioner.ExceptionPartitioner;
@@ -11,13 +12,14 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.MRConfig;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 
 public class MorphlineMRDriver extends Configured implements Tool {
@@ -26,6 +28,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
 
     public static final String MORPHLINE_FILE = "morphlineFile";
     public static final String MORPHLINE_ID = "morphlineId";
+
 
     private Options buildOption() {
         Options opts = new Options();
@@ -143,7 +146,13 @@ public class MorphlineMRDriver extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(input_path));
         IgnoreKeyOutputFormat.setOutputPath(job, outputPath);
 
-        return job.waitForCompletion(true) ? 0 : 1;
+        int result = job.waitForCompletion(true) ? 0 : 1;
+
+        if(result == 0) {
+            saveJobLogs(job);
+        }
+
+        return result;
     }
 
     public static void main(String[] args) {
@@ -153,4 +162,21 @@ public class MorphlineMRDriver extends Configured implements Tool {
             e.printStackTrace();
         }
     }
+
+    private void saveJobLogs(Job job) throws Exception {
+
+        LOGGER.info("Job Name: " + job.getJobName());
+
+        if(job.isSuccessful()) {
+            LOGGER.info("Job Status: Successful.");
+            CounterGroup counterGroup = job.getCounters().getGroup(MorphlinesMRCounters.COUNTERGROUP);
+            for(Counter c : counterGroup) {
+                LOGGER.info(c.getDisplayName() + "=" + c.getValue());
+            }
+        } else {
+            LOGGER.info("Job Status: " + job.getStatus().toString());
+        }
+
+    }
+
 }

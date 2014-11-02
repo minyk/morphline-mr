@@ -1,5 +1,6 @@
 package com.example.minyk.mapper;
 
+import com.example.minyk.counter.MorphlinesMRCounters;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
@@ -32,6 +33,11 @@ public class MapperRecordEmitter implements Command {
         output_value.set(record.get("value").get(0).toString());
         try {
             context.write(output_key, output_value);
+            if(output_key.toString().equals(MorphlineMapper.EXCEPTION_KEY_FIELD)) {
+                context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_EXCEPTIOIN).increment(1L);
+            } else {
+                context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_PROCESSED).increment(1L);
+            }
         } catch (Exception e) {
             LOGGER.warn("Cannot write record to context", e);
         }

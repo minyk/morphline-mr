@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.example.minyk.MorphlineMRDriver;
+import com.example.minyk.counter.MorphlinesMRCounters;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -40,6 +41,9 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
     }
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+
+        count(context, MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_INPUTTOTAL);
+
         record.put(Fields.ATTACHMENT_BODY, new ByteArrayInputStream(value.toString().getBytes()));
         if(LOGGER.isDebugEnabled()) {
             LOGGER.debug("Value: " + value.toString());
@@ -53,4 +57,7 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
         record.removeAll(Fields.ATTACHMENT_BODY);
     }
 
+    private void count(Context c, String group, String counter) {
+        c.getCounter(group, counter).increment(1L);
+    }
 }

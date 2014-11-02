@@ -13,6 +13,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRConfig;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -112,10 +114,6 @@ public class MorphlineMRDriver extends Configured implements Tool {
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
             conf.set(CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY, CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT);
         }
-
-        Job job = Job.getInstance(conf, job_name);
-        job.setJarByClass(MorphlineMRDriver.class);
-        job.setMapperClass(MorphlineMapper.class);
 
         // Add morphline file to distributed cache
         Path morphlinefile = new Path(filename);

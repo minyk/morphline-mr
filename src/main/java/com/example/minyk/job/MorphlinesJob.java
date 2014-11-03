@@ -1,5 +1,7 @@
 package com.example.minyk.job;
 
+import com.example.minyk.counter.MorphlinesMRCounters;
+import com.example.minyk.metrics.MorphlinesMRMetrics;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
@@ -8,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
 
 import java.io.IOException;
@@ -18,7 +21,6 @@ import java.io.IOException;
 public class MorphlinesJob extends Job {
     private static final Log LOG = LogFactory.getLog(MorphlinesJob.class);
 
-    private String metric_sink;
     private GMetric ganglia;
 
     private MorphlinesJob() throws IOException {
@@ -32,11 +34,7 @@ public class MorphlinesJob extends Job {
     @Override
     public boolean monitorAndPrintJob() throws IOException, InterruptedException {
         if(ganglia != null) {
-            try {
-                ganglia.announce("MapProgress", String.valueOf(this.mapProgress()), GMetricType.FLOAT, "%", GMetricSlope.POSITIVE, 100, 100, "morphlines-mr");
-            } catch (GangliaException e) {
-                LOG.warn("Cannot report metric to ganglia: " + e.getMessage());
-            }
+            gangliaMetric();
         }
         return super.monitorAndPrintJob();
     }
@@ -57,8 +55,24 @@ public class MorphlinesJob extends Job {
         return result;
     }
 
-    public void setMetricSink(String url) throws  IOException {
-        this.metric_sink = new String(url);
-        ganglia = new GMetric(url, 8649, GMetric.UDPAddressingMode.UNICAST, 1);
+    public void setMetricSink(String url, int port, GMetric.UDPAddressingMode mode) throws  IOException {
+        ganglia = new GMetric(url, port, mode, 1);
+    }
+
+    public void gangliaMetric() {
+        int tmax = Job.getProgressPollInterval(this.conf);
+        String jobName = this.getJobName();
+        try {
+            CounterGroup counterGroup = this.getCounters().getGroup(MorphlinesMRCounters.COUNTERGROUP);
+            ganglia.announce(jobName + ".Map.Progress", String.valueOf(this.mapProgress()), GMetricType.FLOAT, "%", GMetricSlope.BOTH, tmax, tmax, "morphlines-mr");
+            ganglia.announce(jobName + ".Reduce.Progress", String.valueOf(this.reduceProgress()), GMetricType.FLOAT, "%", GMetricSlope.BOTH, tmax, tmax, "morphlines-mr");
+            ganglia.announce(MorphlinesMRMetrics.getInputRecordName(jobName), String.valueOf(counterGroup.findCounter(MorphlinesMRCounters.Mapper.COUNTER_INPUTTOTAL).getValue()), GMetricType.INT32, "EA", GMetricSlope.BOTH, tmax, tmax, "morphlines-mr");
+            ganglia.announce(MorphlinesMRMetrics.getExceptionRecordName(jobName), String.valueOf(counterGroup.findCounter(MorphlinesMRCounters.Mapper.COUNTER_EXCEPTIOIN).getValue()), GMetricType.INT32, "EA", GMetricSlope.BOTH, tmax, tmax, "morphlines-mr");
+            ganglia.announce(MorphlinesMRMetrics.getProcessedRecordName(jobName), String.valueOf(counterGroup.findCounter(MorphlinesMRCounters.Mapper.COUNTER_PROCESSED).getValue()), GMetricType.INT32, "EA", GMetricSlope.BOTH, tmax, tmax, "morphlines-mr");
+        } catch (GangliaException e) {
+            LOG.warn("Cannot report metric to ganglia: " + e.getMessage());
+        } catch (IOException ioe) {
+            LOG.warn("Cannot read Counters: " + ioe.getMessage());
+        }
     }
 }

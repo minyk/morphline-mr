@@ -11,6 +11,7 @@
     <properties>
         <kite-version>0.17.0</kite-version>
         <hadoop-version>2.5.1</hadoop-version>
+        <metrics.version>3.1.0</metrics.version>
     </properties>
 
 
@@ -87,6 +88,18 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.ganglia.gmetric4j</groupId>
+            <artifactId>gmetric4j</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics.version}</version>
         </dependency>
 
         <dependency>

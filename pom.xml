@@ -69,6 +69,25 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.ruleoftech</groupId>
+                <artifactId>markdown-page-generator-plugin</artifactId>
+                <version>0.6</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <headerHtmlFile>${project.basedir}/src/main/resources/markdown/html/header.html</headerHtmlFile>
+                    <defaultTitle>Morphline-MR</defaultTitle>
+                    <copyDirectories>css</copyDirectories>
+                    <pegdownExtensions>TABLES,FENCED_CODE_BLOCKS,AUTOLINKS</pegdownExtensions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

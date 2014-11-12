@@ -48,6 +48,14 @@ In the morphline config files, use this value to key when exception is thrown. F
 
 See https://github.com/minyk/morphline-mr/wiki/Grok-with-tryRules
 
+## Grok dictionary references
+
+```
+mvn clean process-sources
+```
+
+The html pages are in `target/html/`.
+
 ## Acknowledgements
 
 This project is inspired by SequenceIQ' Mapreduce sample. Thanks for a great example!

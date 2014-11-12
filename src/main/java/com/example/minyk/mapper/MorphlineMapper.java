@@ -9,6 +9,7 @@ import com.example.minyk.counter.MorphlinesMRCounters;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
@@ -38,26 +39,25 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
         } else {
             useReducers = true;
         }
+
     }
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
-        count(context, MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_INPUTTOTAL);
-
         record.put(Fields.ATTACHMENT_BODY, new ByteArrayInputStream(value.toString().getBytes()));
+
         if(LOGGER.isDebugEnabled()) {
             LOGGER.debug("Value: " + value.toString());
         }
         if(useReducers) {
             record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY);
         }
+
         if (!morphline.process(record)) {
             LOGGER.info("Morphline failed to process record: {}", record);
         }
-        record.removeAll(Fields.ATTACHMENT_BODY);
-    }
 
-    private void count(Context c, String group, String counter) {
-        c.getCounter(group, counter).increment(1L);
+        //record.removeAll(Fields.ATTACHMENT_BODY);
+        record.getFields().clear();
     }
 }

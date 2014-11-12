@@ -162,7 +162,6 @@
             <artifactId>hadoop-client</artifactId>
             <version>${hadoop-version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

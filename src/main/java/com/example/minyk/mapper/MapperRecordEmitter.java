@@ -2,6 +2,7 @@ package com.example.minyk.mapper;
 
 import com.example.minyk.counter.MorphlinesMRCounters;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.Record;
@@ -13,9 +14,14 @@ public class MapperRecordEmitter implements Command {
     private final Text output_key = new Text();
     private final Text output_value = new Text();
     private final Mapper.Context context;
+    private final Counter normal;
+    private final Counter exception;
 
     public MapperRecordEmitter(Mapper.Context context) {
+
         this.context = context;
+        this.exception = context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_EXCEPTIOIN);
+        this.normal = context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_PROCESSED);
     }
 
     @Override
@@ -34,9 +40,9 @@ public class MapperRecordEmitter implements Command {
         try {
             context.write(output_key, output_value);
             if(output_key.toString().equals(MorphlineMapper.EXCEPTION_KEY_FIELD)) {
-                context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_EXCEPTIOIN).increment(1L);
+                exception.increment(1L);
             } else {
-                context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Mapper.COUNTER_PROCESSED).increment(1L);
+                normal.increment(1L);
             }
         } catch (Exception e) {
             LOGGER.warn("Cannot write record to context", e);

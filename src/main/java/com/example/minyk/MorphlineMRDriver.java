@@ -1,35 +1,33 @@
 package com.example.minyk;
 
 import com.example.minyk.counter.MorphlinesMRCounters;
+import com.example.minyk.job.MorphlinesJob;
 import com.example.minyk.mapper.IgnoreKeyOutputFormat;
 import com.example.minyk.mapper.MorphlineMapper;
 import com.example.minyk.partitioner.ExceptionPartitioner;
+import info.ganglia.gmetric4j.gmetric.GMetric;
 import org.apache.commons.cli.*;
 import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class MorphlineMRDriver extends Configured implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMRDriver.class);
 
-    public static final String MORPHLINE_FILE = "morphlineFile";
-    public static final String MORPHLINE_ID = "morphlineId";
+    public static final String MORPHLINE_FILE = "morphlinesmr.conf.file";
+    public static final String MORPHLINE_ID = "morphlinesmr.conf.id";
 
     private Options buildOption() {
         Options opts = new Options();
@@ -73,6 +71,10 @@ public class MorphlineMRDriver extends Configured implements Tool {
         dictionaries.setRequired(false);
         opts.addOption(dictionaries);
 
+        Option ganglia = new Option("g", "ganglia", true, "ganglia gmeta server.");
+        dictionaries.setRequired(false);
+        opts.addOption(ganglia);
+
         return opts;
     }
 
@@ -100,7 +102,21 @@ public class MorphlineMRDriver extends Configured implements Tool {
             job_name = "Data_Cleaning_Job";
         }
 
-        Job job = Job.getInstance(this.getConf(), job_name);
+        MorphlinesJob job;
+
+        if(cmd.hasOption('g')) {
+            String ganglia_server = cmd.getOptionValue('g');
+            LOGGER.info("Use ganglia: " + ganglia_server);
+            if(ganglia_server.contains(":")) {
+                String[] server = ganglia_server.split("\\:");
+                job = MorphlinesJob.getInstance(this.getConf(), job_name, server[0], Integer.parseInt(server[1]), GMetric.UDPAddressingMode.getModeForAddress(server[0]) );
+            } else {
+                job = MorphlinesJob.getInstance(this.getConf(), job_name, ganglia_server, 8649, GMetric.UDPAddressingMode.getModeForAddress(ganglia_server));
+            }
+        } else {
+            job = MorphlinesJob.getInstance(this.getConf(), job_name);
+        }
+//        Job job = Job.getInstance(this.getConf(), job_name);
         job.setJarByClass(MorphlineMRDriver.class);
         job.setMapperClass(MorphlineMapper.class);
 

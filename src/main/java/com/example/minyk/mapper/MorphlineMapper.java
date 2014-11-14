@@ -5,11 +5,9 @@ import java.io.File;
 import java.io.IOException;
 
 import com.example.minyk.MorphlineMRDriver;
-import com.example.minyk.counter.MorphlinesMRCounters;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
@@ -39,7 +37,6 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
         } else {
             useReducers = true;
         }
-
     }
 
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {

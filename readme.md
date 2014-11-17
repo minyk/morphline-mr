@@ -35,6 +35,7 @@ $ yarn jar target/morphline-mr-*-jar-with-dependencies.jar -f morphline_with_exc
 - "-e" or "--exception-reducers" describes total number of reducers for exception cases. Default is 2.
 - "-j" or "--job-name" the name of the job. Default is "Data_Cleaning_Job".
 - "-l" or "--local-mode" Use local mode instead of YARN(MRv2) or Classic(MRv1). Use this option for testing purpose.
+- "-g" or "--ganglia" for the ganglia server to report metrics. It can be mutlicast ip.
 
 ## Map only job
 

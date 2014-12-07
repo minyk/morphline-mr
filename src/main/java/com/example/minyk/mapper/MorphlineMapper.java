@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import com.example.minyk.MorphlineMRConfig;
 import com.example.minyk.MorphlineMRDriver;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
@@ -26,8 +27,8 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRDriver.MORPHLINE_FILE));
-        String morphLineId = context.getConfiguration().get(MorphlineMRDriver.MORPHLINE_ID);
+        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_FILE));
+        String morphLineId = context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_ID);
         MapperRecordEmitter recordEmitter = new MapperRecordEmitter(context);
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()

@@ -7,6 +7,15 @@
     </formats>
     <baseDirectory>${finalName}-bin</baseDirectory>
 
+    <!-- Adds the dependencies of our application to the lib directory -->
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <unpack>false</unpack>
+        </dependencySet>
+    </dependencySets>
+
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/src/main/resources/bin/</directory>
@@ -28,6 +37,7 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>*.jar</include>
+                <include>html/**</include>
             </includes>
         </fileSet>
     </fileSets>

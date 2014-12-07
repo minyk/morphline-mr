@@ -22,21 +22,20 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+
 public class MorphlineMRDriver extends Configured implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMRDriver.class);
 
-    public static final String MORPHLINE_FILE = "morphlinesmr.conf.file";
-    public static final String MORPHLINE_ID = "morphlinesmr.conf.id";
-
     private Options buildOption() {
         Options opts = new Options();
         Option mfile = new Option("f", "morphline-file", true, "target morphline file.");
-        mfile.setRequired(true);
+        mfile.setRequired(false);
         opts.addOption(mfile);
 
         Option mid = new Option("m", "morphlie-id", true, "target morphline id in the file");
-        mid.setRequired(true);
+        mid.setRequired(false);
         opts.addOption(mid);
 
         Option input = new Option("i", "input", true, "input location");
@@ -87,80 +86,108 @@ public class MorphlineMRDriver extends Configured implements Tool {
             System.exit(1);
         }
 
+        if(!System.getenv().containsKey(MorphlineMRConfig.MORPHLINESMR_LOCAL_HOME)) {
+            LOGGER.error("Please set " + MorphlineMRConfig.MORPHLINESMR_LOCAL_HOME + " variable.");
+            System.exit(1);
+        }
+
+        String MMR_HOME = System.getenv(MorphlineMRConfig.MORPHLINESMR_LOCAL_HOME);
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(buildOption(), args, true);
 
-        String filename = cmd.getOptionValue('f');
-        String id = cmd.getOptionValue('m');
-        String input_path = cmd.getOptionValue('i');
-        String output_path = cmd.getOptionValue('o');
+        Configuration config = this.getConf();
+        // Load conf from default.xml
+        URL file;
+        file = MorphlineMRDriver.class.getClassLoader().getResource(MorphlineMRConfig.MORPHLINESMR_DEFAULT_CONFFILE);
+        config.addResource(file);
 
-        String job_name = "";
-        if(cmd.hasOption('j')) {
-            job_name = cmd.getOptionValue('j');
-        } else {
-            job_name = "Data_Cleaning_Job";
+        // Load conf from site.xml
+        config.addResource(MMR_HOME + Path.SEPARATOR + "conf" + Path.SEPARATOR + MorphlineMRConfig.MORPHLINESMR_SITE_CONFFILE);
+
+        // Load conf from command line.
+        if(cmd.hasOption('i')) {
+            config.set(MorphlineMRConfig.INPUT_PATH, cmd.getOptionValue('i'));
         }
 
-        MorphlinesJob job;
+        if(cmd.hasOption('o')) {
+            config.set(MorphlineMRConfig.OUTPUT_PATH, cmd.getOptionValue('o'));
+        }
+
+        if(cmd.hasOption('l')) {
+            config.set(MorphlineMRConfig.MORPHLINESMR_MODE, MorphlineMRConfig.DEFAULT_MORPHLIESMR_MODE);
+        }
+
+        if(cmd.hasOption('j')) {
+            config.set(MorphlineMRConfig.JOB_NAME, cmd.getOptionValue('j'));
+        }
+
+        if(cmd.hasOption('f')) {
+            config.set(MorphlineMRConfig.MORPHLINE_FILE, cmd.getOptionValue('f'));
+        }
+
+        if(cmd.hasOption('m')) {
+            config.set(MorphlineMRConfig.MORPHLINE_ID, cmd.getOptionValue('m'));
+        }
+
+        if(cmd.hasOption('n')) {
+            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS, cmd.getOptionValue('n', "10"));
+        }
+
+        if(cmd.hasOption('e')) {
+            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('e', "2"));
+        }
 
         if(cmd.hasOption('g')) {
-            String ganglia_server = cmd.getOptionValue('g');
+            config.set(MorphlineMRConfig.METRICS_GANGLAI_SINK, cmd.getOptionValue('g'));
+        }
+
+        if(cmd.hasOption('r')) {
+            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS, "10");
+            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('e'));
+        }
+        // 1 left
+
+        // Make Job obj.
+        MorphlinesJob job;
+
+        if(!config.get(MorphlineMRConfig.METRICS_GANGLAI_SINK).isEmpty()) {
+            String ganglia_server = config.get(MorphlineMRConfig.METRICS_GANGLAI_SINK);
             LOGGER.info("Use ganglia: " + ganglia_server);
             if(ganglia_server.contains(":")) {
                 String[] server = ganglia_server.split("\\:");
-                job = MorphlinesJob.getInstance(this.getConf(), job_name, server[0], Integer.parseInt(server[1]), GMetric.UDPAddressingMode.getModeForAddress(server[0]) );
+                job = MorphlinesJob.getInstance(config, config.get(MorphlineMRConfig.JOB_NAME), server[0], Integer.parseInt(server[1]), GMetric.UDPAddressingMode.getModeForAddress(server[0]) );
             } else {
-                job = MorphlinesJob.getInstance(this.getConf(), job_name, ganglia_server, 8649, GMetric.UDPAddressingMode.getModeForAddress(ganglia_server));
+                job = MorphlinesJob.getInstance(config, config.get(MorphlineMRConfig.JOB_NAME), ganglia_server, 8649, GMetric.UDPAddressingMode.getModeForAddress(ganglia_server));
             }
         } else {
-            job = MorphlinesJob.getInstance(this.getConf(), job_name);
+            job = MorphlinesJob.getInstance(this.getConf(), config.get(MorphlineMRConfig.JOB_NAME));
         }
-//        Job job = Job.getInstance(this.getConf(), job_name);
+
         job.setJarByClass(MorphlineMRDriver.class);
         job.setMapperClass(MorphlineMapper.class);
 
         Configuration conf = job.getConfiguration();
-        conf.set(MORPHLINE_ID, id);
 
-        if (cmd.hasOption('l')) {
+        if (conf.get(MorphlineMRConfig.MORPHLINESMR_MODE).equals(MorphlineMRConfig.DEFAULT_MORPHLIESMR_MODE)) {
             LOGGER.info("Use local mode.");
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
             conf.set(CommonConfigurationKeysPublic.FS_DEFAULT_NAME_KEY, CommonConfigurationKeysPublic.FS_DEFAULT_NAME_DEFAULT);
-            conf.set(MORPHLINE_FILE, filename);
-        } else {
 
-            // Add morphline file to distributed cache
-//            LocalFileSystem fs = FileSystem.getLocal(conf);
-            Path morphlinefile = new Path(filename);
+        } else {
+            Path morphlinefile = new Path(conf.get(MorphlineMRConfig.CONF_DIR) + Path.SEPARATOR + conf.get(MorphlineMRConfig.MORPHLINE_FILE));
             job.addCacheFile(morphlinefile.toUri());
-            conf.set(MORPHLINE_FILE, morphlinefile.getName());
-//        if(cmd.hasOption('d')) {
-//            // Add grok dictionaries to distributed cache
-//            Path grokdic = new Path(cmd.getOptionValue('d'));
-//            if (lfs.isDirectory(grokdic)) {
-//                for(RemoteIterator<LocatedFileStatus> iter = lfs.listFiles(grokdic,false); iter.hasNext(); ) {
-//                    LocatedFileStatus fileStatus = iter.next();
-//                    job.addFileToClassPath(fileStatus.getPath());
-//                }
-//            } else {
-//                job.addCacheFile(grokdic.toUri());
-//            }
-//        }
         }
 
-
         if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {
-            int tr = Integer.parseInt(cmd.getOptionValue('n', "10"));
-            int er = Integer.parseInt(cmd.getOptionValue('e', "2"));
-            if(er >= tr) {
-                LOGGER.error("Total number of reducers should be larger than the number of exception reducers. " + tr + "is smaller than " + er + ".");
-                System.exit(1);
-            }
+            int tr = conf.getInt(MorphlineMRConfig.MORPHLINESMR_REDUCERS, 10);
+            int er = conf.getInt(MorphlineMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, 2);
+
             LOGGER.info("Use reducers: true");
-            LOGGER.info("Total number of reducers: " + tr);
+            LOGGER.info("Total number of reducers: " + (tr + er));
             LOGGER.info("Total number of exception reducers: " + er);
-            job.setNumReduceTasks(tr);
+
+            job.setNumReduceTasks((tr+er));
             job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, er);
             job.setPartitionerClass(ExceptionPartitioner.class);
             job.setMapOutputKeyClass(Text.class);
@@ -174,8 +201,11 @@ public class MorphlineMRDriver extends Configured implements Tool {
         job.setOutputValueClass(Text.class);
         job.setOutputFormatClass(IgnoreKeyOutputFormat.class);
 
+        String input_path = conf.get(MorphlineMRConfig.INPUT_PATH);
+        String output_path = conf.get(MorphlineMRConfig.OUTPUT_PATH);
+
         Path outputPath = new Path(output_path);
-        FileSystem fs = FileSystem.get(job.getConfiguration());
+        FileSystem fs = FileSystem.get(conf);
         try {
             if(fs.exists(outputPath)) {
                 fs.delete(outputPath, true);

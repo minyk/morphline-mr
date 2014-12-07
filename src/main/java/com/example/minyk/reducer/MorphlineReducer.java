@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.example.minyk.MorphlineMRConfig;
 import com.example.minyk.MorphlineMRDriver;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -28,8 +29,8 @@ public class MorphlineReducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRDriver.MORPHLINE_FILE));
-        String morphLineId = context.getConfiguration().get(MorphlineMRDriver.MORPHLINE_ID);
+        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_FILE));
+        String morphLineId = context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_ID);
         ReducerRecordEmitter recordEmitter = new ReducerRecordEmitter(context);
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()

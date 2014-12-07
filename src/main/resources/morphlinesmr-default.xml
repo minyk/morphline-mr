@@ -1,0 +1,58 @@
+<configuration>
+    <property>
+        <name>morphlines-mr.metrcis.ganglia-server</name>
+        <value></value>
+    </property>
+    <property>
+        <name>morphlines-mr.metrics.log.dir</name>
+        <value>/var/log/morphlines-mr</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.home</name>
+        <value>/user/morphlines</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.confs</name>
+        <value>${morphlines-mr.dirs.home}/confs</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.input</name>
+        <value>${morphlines-mr.dirs.home}/input</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.output</name>
+        <value>${morphlines-mr.dirs.home}/output</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.exception</name>
+        <value>${morphlines-mr.dirs.home}/exception</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.filename</name>
+        <value>${morphlines-mr.dir.confs}/morphlines-mr.conf</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.morphlineid</name>
+        <value>morphline1</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.jobname</name>
+        <value>data_cleaning_job</value>
+    </property>
+
+    <property>
+        <name>morphlines-mr.conf.mode</name>
+        <value>local</value>
+    </property>
+
+    <property>
+        <name>morphlines-mr.conf.reducers.normal</name>
+        <value>0</value>
+    </property>
+
+    <property>
+        <name>morphlines-mr.conf.reducers.exception</name>
+        <value>0</value>
+    </property>
+
+</configuration>

@@ -1,5 +1,6 @@
 package com.example.minyk.mapper;
 
+import com.example.minyk.MorphlineMRConfig;
 import com.example.minyk.MorphlineMRDriver;
 import com.example.minyk.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
@@ -25,8 +26,8 @@ public class MorphlineMapperPipedLogTest {
         MorphlineMapper mapper = new MorphlineMapper();
         mapDriver = MapDriver.newMapDriver(mapper);
         URL file = MorphlineMapperTest.class.getClassLoader().getResource("morphline_pipedlog.conf");
-        mapDriver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_FILE,file.getPath());
-        mapDriver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_ID, "morphline1");
+        mapDriver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_FILE,file.getPath());
+        mapDriver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_ID, "morphline1");
         mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
     }
 

@@ -1,0 +1,22 @@
+<configuration>
+    <property>
+        <name>morphlines-mr.conf.mode</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>morphlines-mr.dirs.home</name>
+        <value>/user/morphlines</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.filename</name>
+        <value>${morphlines-mr.dir.confs}/morphlines-mr.conf</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.morphlineid</name>
+        <value>morphline1</value>
+    </property>
+    <property>
+        <name>morphlines-mr.conf.jobname</name>
+        <value>data_cleaning_job</value>
+    </property>
+</configuration>

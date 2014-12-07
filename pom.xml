@@ -33,9 +33,6 @@
                                     <mainClass>com.example.minyk.MorphlineMRDriver</mainClass>
                                 </manifest>
                             </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
                             <finalName>morphline-mr-${project.version}</finalName>
                             <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
                             <appendAssemblyId>true</appendAssemblyId>
@@ -88,6 +85,16 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>bin/**</exclude>
+                    <exclude>conf/**</exclude>
+                    <exclude>markdown/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
     <repositories>

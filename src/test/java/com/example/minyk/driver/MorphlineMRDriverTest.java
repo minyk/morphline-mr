@@ -1,5 +1,6 @@
 package com.example.minyk.driver;
 
+import com.example.minyk.MorphlineMRConfig;
 import com.example.minyk.MorphlineMRDriver;
 import com.example.minyk.mapper.MorphlineMapper;
 import com.example.minyk.partitioner.ExceptionPartitioner;
@@ -28,8 +29,8 @@ public class MorphlineMRDriverTest {
         driver = new MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text>(mapper, reducer);
 
         URL file = MorphlineMRDriverTest.class.getClassLoader().getResource("morphline_with_exception.conf");
-        driver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_FILE,file.getPath());
-        driver.getConfiguration().set(MorphlineMRDriver.MORPHLINE_ID,"morphline1");
+        driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_FILE,file.getPath());
+        driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_ID,"morphline1");
     }
 
     @Test

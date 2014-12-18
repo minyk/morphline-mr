@@ -29,11 +29,11 @@ public class MorphlinesMRDriver extends Configured implements Tool {
     private Options buildOption() {
         Options opts = new Options();
         Option mfile = new Option("f", "morphline-file", true, "target morphline file.");
-        mfile.setRequired(false);
+        mfile.setRequired(true);
         opts.addOption(mfile);
 
         Option mid = new Option("m", "morphlie-id", true, "target morphline id in the file");
-        mid.setRequired(false);
+        mid.setRequired(true);
         opts.addOption(mid);
 
         Option input = new Option("i", "input", true, "input location");

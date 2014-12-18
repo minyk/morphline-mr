@@ -3,7 +3,7 @@ package com.github.minyk.morphlinesmr;
 /**
  * Created by minyk on 11/26/14.
  */
-public class MorphlineMRConfig {
+public class MorphlinesMRConfig {
 
     public static final String MORPHLINE_FILE = "morphlines-mr.conf.filename";
     public static final String MORPHLINE_ID = "morphlines-mr.conf.morphlineid";

@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import com.github.minyk.morphlinesmr.MorphlineMRConfig;
+import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.kitesdk.morphline.api.Command;
@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by drake on 9/17/14.
  */
-public class MorphlineReducer extends Reducer<Text, Text, Text, Text> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineReducer.class);
+public class MorphlinesReducer extends Reducer<Text, Text, Text, Text> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MorphlinesReducer.class);
     private static final String SEPERATOR = "\0001";
     private Text value;
     private final Record record = new Record();
@@ -27,8 +27,8 @@ public class MorphlineReducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_FILE));
-        String morphLineId = context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_ID);
+        File morphLineFile = new File(context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_FILE));
+        String morphLineId = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_ID);
         ReducerRecordEmitter recordEmitter = new ReducerRecordEmitter(context);
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()

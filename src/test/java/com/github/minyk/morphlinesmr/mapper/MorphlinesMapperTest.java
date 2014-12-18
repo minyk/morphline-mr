@@ -1,6 +1,6 @@
 package com.github.minyk.morphlinesmr.mapper;
 
-import com.github.minyk.morphlinesmr.MorphlineMRConfig;
+import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -15,17 +15,17 @@ import java.net.URL;
 /**
  * Created by drake on 9/16/14.
  */
-public class MorphlineMapperTest {
+public class MorphlinesMapperTest {
 
     MapDriver<LongWritable, Text, Text, Text> mapDriver;
 
     @Before
     public void setUp() {
-        MorphlineMapper mapper = new MorphlineMapper();
+        MorphlinesMapper mapper = new MorphlinesMapper();
         mapDriver = MapDriver.newMapDriver(mapper);
-        URL file = MorphlineMapperTest.class.getClassLoader().getResource("morphline_with_exception.conf");
-        mapDriver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_FILE,file.getPath());
-        mapDriver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_ID, "morphline1");
+        URL file = MorphlinesMapperTest.class.getClassLoader().getResource("morphline_with_exception.conf");
+        mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
+        mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID, "morphline1");
         mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
     }
 

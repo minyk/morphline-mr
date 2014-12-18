@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import com.github.minyk.morphlinesmr.MorphlineMRConfig;
+import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -17,8 +17,8 @@ import org.kitesdk.morphline.base.Fields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MorphlineMapper.class);
+public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MorphlinesMapper.class);
     public static final String EXCEPTION_KEY_FIELD = "exceptionkey";
     private final Record record = new Record();
     private Command morphline;
@@ -26,8 +26,8 @@ public class MorphlineMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        File morphLineFile = new File(context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_FILE));
-        String morphLineId = context.getConfiguration().get(MorphlineMRConfig.MORPHLINE_ID);
+        File morphLineFile = new File(context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_FILE));
+        String morphLineId = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_ID);
         MapperRecordEmitter recordEmitter = new MapperRecordEmitter(context);
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()

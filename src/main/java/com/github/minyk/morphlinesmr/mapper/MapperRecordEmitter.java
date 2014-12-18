@@ -39,7 +39,7 @@ public class MapperRecordEmitter implements Command {
         output_value.set(record.get("value").get(0).toString());
         try {
             context.write(output_key, output_value);
-            if(output_key.toString().equals(MorphlineMapper.EXCEPTION_KEY_FIELD)) {
+            if(output_key.toString().equals(MorphlinesMapper.EXCEPTION_KEY_FIELD)) {
                 exception.increment(1L);
             } else {
                 normal.increment(1L);

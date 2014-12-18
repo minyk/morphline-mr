@@ -1,6 +1,6 @@
 package com.github.minyk.morphlinesmr;
 
-import com.github.minyk.morphlinesmr.mapper.MorphlineMapper;
+import com.github.minyk.morphlinesmr.mapper.MorphlinesMapper;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import com.github.minyk.morphlinesmr.reducer.IdentityReducer;
 import org.apache.hadoop.io.LongWritable;
@@ -21,14 +21,14 @@ public class MorphlineMRExceptionTest {
 
     @Before
     public void setUp() {
-        MorphlineMapper mapper = new MorphlineMapper();
+        MorphlinesMapper mapper = new MorphlinesMapper();
         IdentityReducer reducer = new IdentityReducer();
         ExceptionPartitioner partitioner = new ExceptionPartitioner();
         driver = new MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text>(mapper, reducer);
 
         URL file = MorphlineMRExceptionTest.class.getClassLoader().getResource("morphline_with_exception.conf");
-        driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_FILE,file.getPath());
-        driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_ID,"morphline1");
+        driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
+        driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID,"morphline1");
     }
 
     @Test

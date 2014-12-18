@@ -1,10 +1,8 @@
-package com.example.minyk.driver;
+package com.github.minyk.morphlinesmr;
 
-import com.example.minyk.MorphlineMRConfig;
-import com.example.minyk.MorphlineMRDriver;
-import com.example.minyk.mapper.MorphlineMapper;
-import com.example.minyk.partitioner.ExceptionPartitioner;
-import com.example.minyk.reducer.IdentityReducer;
+import com.github.minyk.morphlinesmr.mapper.MorphlineMapper;
+import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
+import com.github.minyk.morphlinesmr.reducer.IdentityReducer;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -18,7 +16,7 @@ import java.net.URL;
 /**
  * Created by drake on 10/10/14.
  */
-public class MorphlineMRDriverTest {
+public class MorphlineMRExceptionTest {
     MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text> driver;
 
     @Before
@@ -28,7 +26,7 @@ public class MorphlineMRDriverTest {
         ExceptionPartitioner partitioner = new ExceptionPartitioner();
         driver = new MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text>(mapper, reducer);
 
-        URL file = MorphlineMRDriverTest.class.getClassLoader().getResource("morphline_with_exception.conf");
+        URL file = MorphlineMRExceptionTest.class.getClassLoader().getResource("morphline_with_exception.conf");
         driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_FILE,file.getPath());
         driver.getConfiguration().set(MorphlineMRConfig.MORPHLINE_ID,"morphline1");
     }

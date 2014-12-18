@@ -1,4 +1,4 @@
-package com.example.minyk.metrics;
+package com.github.minyk.morphlinesmr.metrics;
 
 public class MorphlinesMRMetrics {
     public static final String GROUP_NAME = "morphlines-mr";

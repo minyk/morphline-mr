@@ -1,7 +1,7 @@
-package com.example.minyk.job;
+package com.github.minyk.morphlinesmr.job;
 
-import com.example.minyk.counter.MorphlinesMRCounters;
-import com.example.minyk.metrics.MorphlinesMRMetrics;
+import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
+import com.github.minyk.morphlinesmr.metrics.MorphlinesMRMetrics;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;

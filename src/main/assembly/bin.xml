@@ -10,6 +10,7 @@
     <!-- Adds the dependencies of our application to the lib directory -->
     <dependencySets>
         <dependencySet>
+            <scope>runtime</scope>
             <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>

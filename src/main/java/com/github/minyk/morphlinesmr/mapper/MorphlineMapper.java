@@ -1,12 +1,11 @@
-package com.example.minyk.mapper;
+package com.github.minyk.morphlinesmr.mapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import com.example.minyk.MorphlineMRConfig;
-import com.example.minyk.MorphlineMRDriver;
-import com.example.minyk.partitioner.ExceptionPartitioner;
+import com.github.minyk.morphlinesmr.MorphlineMRConfig;
+import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.MRJobConfig;

@@ -1,4 +1,4 @@
-package com.example.minyk;
+package com.github.minyk.morphlinesmr;
 
 /**
  * Created by minyk on 11/26/14.

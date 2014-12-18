@@ -1,4 +1,4 @@
-package com.example.minyk.counter;
+package com.github.minyk.morphlinesmr.counter;
 
 /**
  * Created by minyk on 11/2/14.

@@ -1,13 +1,11 @@
-package com.example.minyk.reducer;
+package com.github.minyk.morphlinesmr.reducer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import com.example.minyk.MorphlineMRConfig;
-import com.example.minyk.MorphlineMRDriver;
-import org.apache.hadoop.io.LongWritable;
+import com.github.minyk.morphlinesmr.MorphlineMRConfig;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.kitesdk.morphline.api.Command;

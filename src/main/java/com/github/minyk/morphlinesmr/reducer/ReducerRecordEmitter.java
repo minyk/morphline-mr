@@ -1,7 +1,6 @@
-package com.example.minyk.reducer;
+package com.github.minyk.morphlinesmr.reducer;
 
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.Record;

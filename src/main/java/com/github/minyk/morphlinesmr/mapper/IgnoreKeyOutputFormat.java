@@ -1,4 +1,4 @@
-package com.example.minyk.mapper;
+package com.github.minyk.morphlinesmr.mapper;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;

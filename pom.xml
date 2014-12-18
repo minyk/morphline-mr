@@ -30,10 +30,10 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.example.minyk.MorphlineMRDriver</mainClass>
+                                    <mainClass>com.github.minyk.morphlinesmr.MorphlineMRDriver</mainClass>
                                 </manifest>
                             </archive>
-                            <finalName>morphline-mr-${project.version}</finalName>
+                            <finalName>morphlines-mr-${project.version}</finalName>
                             <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
                             <appendAssemblyId>true</appendAssemblyId>
                             <descriptors>
@@ -60,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.example.minyk.MorphlineMRDriver</mainClass>
+                            <mainClass>com.github.minyk.morphlinesmr.MorphlineMRDriver</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -79,7 +79,7 @@
                 </executions>
                 <configuration>
                     <headerHtmlFile>${project.basedir}/src/main/resources/markdown/html/header.html</headerHtmlFile>
-                    <defaultTitle>Morphline-MR</defaultTitle>
+                    <defaultTitle>Morphlines-MR</defaultTitle>
                     <copyDirectories>css,images</copyDirectories>
                     <pegdownExtensions>TABLES,FENCED_CODE_BLOCKS,AUTOLINKS</pegdownExtensions>
                 </configuration>

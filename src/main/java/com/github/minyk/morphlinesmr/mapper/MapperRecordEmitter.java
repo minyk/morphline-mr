@@ -1,6 +1,6 @@
-package com.example.minyk.mapper;
+package com.github.minyk.morphlinesmr.mapper;
 
-import com.example.minyk.counter.MorphlinesMRCounters;
+import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;

@@ -1,6 +1,6 @@
-package com.example.minyk.reducer;
+package com.github.minyk.morphlinesmr.reducer;
 
-import com.example.minyk.counter.MorphlinesMRCounters;
+import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;

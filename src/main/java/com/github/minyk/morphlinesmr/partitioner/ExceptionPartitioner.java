@@ -1,4 +1,4 @@
-package com.example.minyk.partitioner;
+package com.github.minyk.morphlinesmr.partitioner;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;

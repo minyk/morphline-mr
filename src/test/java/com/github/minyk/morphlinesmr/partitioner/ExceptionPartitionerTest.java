@@ -1,4 +1,4 @@
-package com.example.minyk.partitioner;
+package com.github.minyk.morphlinesmr.partitioner;
 
 import junit.framework.Assert;
 import org.apache.hadoop.io.Text;

@@ -1,10 +1,10 @@
-package com.example.minyk;
+package com.github.minyk.morphlinesmr;
 
-import com.example.minyk.counter.MorphlinesMRCounters;
-import com.example.minyk.job.MorphlinesJob;
-import com.example.minyk.mapper.IgnoreKeyOutputFormat;
-import com.example.minyk.mapper.MorphlineMapper;
-import com.example.minyk.partitioner.ExceptionPartitioner;
+import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
+import com.github.minyk.morphlinesmr.job.MorphlinesJob;
+import com.github.minyk.morphlinesmr.mapper.IgnoreKeyOutputFormat;
+import com.github.minyk.morphlinesmr.mapper.MorphlineMapper;
+import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import org.apache.commons.cli.*;
 import org.apache.commons.cli.Options;
@@ -83,6 +83,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
         if(args.length < 1) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("hadoop jar Morphline-mr.jar",buildOption());
+            ToolRunner.printGenericCommandUsage(System.out);
             System.exit(1);
         }
 
@@ -144,7 +145,7 @@ public class MorphlineMRDriver extends Configured implements Tool {
 
         if(cmd.hasOption('r')) {
             config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS, "10");
-            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('e'));
+            config.set(MorphlineMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, "2");
         }
         // 1 left
 

@@ -21,6 +21,9 @@ import java.io.UnsupportedEncodingException;
  * Created by drake on 9/17/14.
  */
 public class IgnoreKeyOutputFormat<K,V> extends TextOutputFormat<K,V> {
+
+    public static String SEPERATOR = "mapreduce.output.textoutputformat.separator";
+
     protected static class IgnoreKeyLineRecordWriter<K, V> extends RecordWriter<K, V> {
         private static final String utf8 = "UTF-8";
         private static final byte[] newline;

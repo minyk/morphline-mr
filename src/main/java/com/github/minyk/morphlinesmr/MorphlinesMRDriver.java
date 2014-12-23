@@ -1,7 +1,6 @@
 package com.github.minyk.morphlinesmr;
 
 import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
-import com.github.minyk.morphlinesmr.job.MorphlinesJob;
 import com.github.minyk.morphlinesmr.mapper.IgnoreKeyOutputFormat;
 import com.github.minyk.morphlinesmr.mapper.MorphlinesMapper;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
@@ -134,21 +133,8 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         // 1 left
 
         // Make Job obj.
-        MorphlinesJob job;
 
-        if(!config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK).isEmpty()) {
-            String ganglia_server = config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK);
-            LOGGER.info("Use ganglia: " + ganglia_server);
-            if(ganglia_server.contains(":")) {
-                String[] server = ganglia_server.split("\\:");
-                job = MorphlinesJob.getInstance(config, config.get(MorphlinesMRConfig.JOB_NAME), server[0], Integer.parseInt(server[1]), GMetric.UDPAddressingMode.getModeForAddress(server[0]) );
-            } else {
-                job = MorphlinesJob.getInstance(config, config.get(MorphlinesMRConfig.JOB_NAME), ganglia_server, 8649, GMetric.UDPAddressingMode.getModeForAddress(ganglia_server));
-            }
-        } else {
-            job = MorphlinesJob.getInstance(this.getConf(), config.get(MorphlinesMRConfig.JOB_NAME));
-        }
-
+        Job job = new Job(config);
         job.setJarByClass(MorphlinesMRDriver.class);
         job.setMapperClass(MorphlinesMapper.class);
 
@@ -162,6 +148,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         } else {
             Path morphlinefile = new Path(conf.get(MorphlinesMRConfig.CONF_DIR) + Path.SEPARATOR + conf.get(MorphlinesMRConfig.MORPHLINE_FILE));
             job.addCacheFile(morphlinefile.toUri());
+
         }
 
         if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {

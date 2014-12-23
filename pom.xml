@@ -9,8 +9,8 @@
     <version>0.3</version>
 
     <properties>
-        <kite-version>0.17.0</kite-version>
-        <hadoop-version>2.5.1</hadoop-version>
+        <kite-version>0.17.1</kite-version>
+        <hadoop-version>0.20.2</hadoop-version>
     </properties>
 
 
@@ -174,7 +174,7 @@
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
+            <artifactId>hadoop-core</artifactId>
             <version>${hadoop-version}</version>
         </dependency>
     </dependencies>

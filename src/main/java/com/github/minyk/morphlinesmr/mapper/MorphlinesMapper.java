@@ -3,12 +3,11 @@ package com.github.minyk.morphlinesmr.mapper;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-
+import com.github.minyk.morphlinesmr.MRJobConfig;
 import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;

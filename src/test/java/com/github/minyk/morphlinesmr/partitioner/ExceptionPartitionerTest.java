@@ -2,12 +2,12 @@ package com.github.minyk.morphlinesmr.partitioner;
 
 import junit.framework.Assert;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.github.minyk.morphlinesmr.MRJobConfig;
 
 
 /**

@@ -9,6 +9,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -147,7 +148,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         } else {
             Path morphlinefile = new Path(conf.get(MorphlinesMRConfig.CONF_DIR) + Path.SEPARATOR + conf.get(MorphlinesMRConfig.MORPHLINE_FILE));
-            job.addCacheFile(morphlinefile.toUri());
+            DistributedCache.addCacheFile(morphlinefile.toUri(), conf);
 
         }
 
@@ -194,9 +195,9 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         int result = job.waitForCompletion(true) ? 0 : 1;
 
-        if(result == 0) {
-            saveJobLogs(job);
-        }
+//        if(result == 0) {
+//            saveJobLogs(job);
+//        }
 
         return result;
     }
@@ -221,7 +222,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
                 LOGGER.info(groupname + "." +c.getDisplayName() + "=" + c.getValue());
             }
         } else {
-            LOGGER.info("Job Status: " + job.getStatus().toString());
+            LOGGER.info("Job Status: failed");
         }
 
     }

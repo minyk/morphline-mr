@@ -12,6 +12,8 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.RemoteIterator;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -22,9 +24,12 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class MorphlinesMRDriver extends Configured implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlinesMRDriver.class);
+    private static final String RESULT_FILE_PREFIX = "part-r-";
 
     private Options buildOption() {
         Options opts = new Options();
@@ -44,6 +49,10 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         input.setRequired(true);
         opts.addOption(output);
 
+        Option exception = new Option("e", "exception", true, "exception location");
+        input.setRequired(false);
+        opts.addOption(exception);
+
         Option reduce = new Option("r", "use-reducer", false, "Use map-reduce process.");
         reduce.setRequired(false);
         opts.addOption(reduce);
@@ -52,7 +61,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         reducers.setRequired(false);
         opts.addOption(reducers);
 
-        Option exceptions = new Option("e", "exception-reducers", true, "Total number of reducers for exception cases. Default is 2 reducers");
+        Option exceptions = new Option("x", "exception-reducers", true, "Total number of reducers for exception cases. Default is 2 reducers");
         exceptions.setRequired(false);
         opts.addOption(exceptions);
 
@@ -99,6 +108,10 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             config.set(MorphlinesMRConfig.OUTPUT_PATH, cmd.getOptionValue('o'));
         }
 
+        if(cmd.hasOption('e')) {
+            config.set(MorphlinesMRConfig.EXCEPTION_PATH, cmd.getOptionValue('e'));
+        }
+
         if(cmd.hasOption('l')) {
             config.set(MorphlinesMRConfig.MORPHLINESMR_MODE, MorphlinesMRConfig.DEFAULT_MORPHLIESMR_MODE);
         }
@@ -119,8 +132,8 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, cmd.getOptionValue('n', "10"));
         }
 
-        if(cmd.hasOption('e')) {
-            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('e', "2"));
+        if(cmd.hasOption('x')) {
+            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('x', "2"));
         }
 
         if(cmd.hasOption('g')) {
@@ -195,6 +208,9 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         int result = job.waitForCompletion(true) ? 0 : 1;
 
+        if(job.getNumReduceTasks() > 0) {
+            moveExeptions(job);
+        }
 //        if(result == 0) {
 //            saveJobLogs(job);
 //        }
@@ -225,6 +241,27 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             LOGGER.info("Job Status: failed");
         }
 
+    }
+
+    private void moveExeptions(Job job) throws IOException {
+        Configuration conf = job.getConfiguration();
+        FileSystem fs = FileSystem.get(conf);
+        int totalReducer = job.getNumReduceTasks();
+        int normalReducer = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, 10);
+        String output_path = conf.get(MorphlinesMRConfig.OUTPUT_PATH);
+        String exception_path = conf.get(MorphlinesMRConfig.EXCEPTION_PATH);
+        try {
+            for(int i = totalReducer - 1; i > normalReducer - 1; i-- ) {
+                String exceptionOutput = output_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
+                String exceptionFile = exception_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
+                fs.rename(new Path(exceptionOutput), new Path(exceptionFile));
+            }
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        } finally {
+            fs.close();
+        }
     }
 
 }

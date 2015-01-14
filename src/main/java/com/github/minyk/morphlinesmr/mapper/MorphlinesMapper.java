@@ -3,12 +3,9 @@ package com.github.minyk.morphlinesmr.mapper;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
-import com.github.minyk.morphlinesmr.MRJobConfig;
 import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -32,9 +29,6 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
     protected void setup(Context context) throws IOException, InterruptedException {
 
         Path[] paths = DistributedCache.getLocalCacheFiles(context.getConfiguration());
-        for(Path path : paths) {
-            LOGGER.info("Cache: " + path.toString());
-        }
 
         File morphLineFile = new File(paths[0].toString());
         String morphLineId = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_ID);
@@ -42,7 +36,7 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();
         morphline = new org.kitesdk.morphline.base.Compiler()
                 .compile(morphLineFile, morphLineId, morphlineContext, recordEmitter);
-        if(context.getConfiguration().getInt(MRJobConfig.NUM_REDUCES,0) == 0) {
+        if(context.getConfiguration().get(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, "0").equals("0")) {
             useReducers = false;
         } else {
             useReducers = true;
@@ -57,7 +51,7 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
             LOGGER.debug("Value: " + value.toString());
         }
         if(useReducers) {
-            record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY);
+            record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY_VALUE);
         }
 
         if (!morphline.process(record)) {

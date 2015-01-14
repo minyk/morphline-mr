@@ -37,7 +37,7 @@ public class MorphlineMRExceptionTest {
         driver.withOutput(NullWritable.get(), new Text("2943974000,syslog,sshd,listening on 0.0.0.0 port 22."));
         try {
             driver.runTest();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -48,7 +48,7 @@ public class MorphlineMRExceptionTest {
         driver.withOutput(NullWritable.get(), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         try {
             driver.runTest();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

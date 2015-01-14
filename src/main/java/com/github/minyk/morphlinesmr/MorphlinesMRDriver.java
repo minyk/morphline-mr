@@ -145,11 +145,11 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         }
 
         if(cmd.hasOption('n')) {
-            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, cmd.getOptionValue('n', "10"));
+            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, cmd.getOptionValue('n'));
         }
 
         if(cmd.hasOption('x')) {
-            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('x', "2"));
+            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('x'));
         }
 
         if(cmd.hasOption('c')) {
@@ -182,12 +182,11 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             int er = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, 2);
 
             LOGGER.info("Use reducers: true");
-            LOGGER.info("Total number of reducers: " + (tr + er));
-            LOGGER.info("Total number of exception reducers: " + er);
+            LOGGER.info("Number of total reducers: " + (tr + er));
+            LOGGER.info("Number of exception reducers: " + er);
 
             job.setNumReduceTasks((tr+er));
             job.setReducerClass(IdentityReducer.class);
-            job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, er);
             job.setPartitionerClass(ExceptionPartitioner.class);
             job.setMapOutputKeyClass(Text.class);
             job.setMapOutputValueClass(Text.class);
@@ -230,8 +229,9 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         int result = job.waitForCompletion(true) ? 0 : 1;
 
         if(result == 0) {
+            LOGGER.info("tasks : " + job.getNumReduceTasks());
             if(job.getNumReduceTasks() > 0) {
-                moveExeptions(job);
+               moveExeptions(job);
             }
           if(cmd.hasOption('c')) {
               saveJobLogs(job);
@@ -304,6 +304,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         String output_path = conf.get(MorphlinesMRConfig.OUTPUT_PATH);
         String exception_path = conf.get(MorphlinesMRConfig.EXCEPTION_PATH);
         try {
+            fs.mkdirs(new Path(exception_path));
             for(int i = totalReducer - 1; i > normalReducer - 1; i-- ) {
                 String exceptionOutput = output_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
                 String exceptionFile = exception_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);

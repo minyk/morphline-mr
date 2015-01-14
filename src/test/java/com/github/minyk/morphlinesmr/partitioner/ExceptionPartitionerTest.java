@@ -1,5 +1,6 @@
 package com.github.minyk.morphlinesmr.partitioner;
 
+import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import junit.framework.Assert;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
@@ -27,7 +28,7 @@ public class ExceptionPartitionerTest {
     @Before
     public void setUp() {
         driver = new MapReduceDriver();
-        driver.getConfiguration().set(ExceptionPartitioner.EXCEPRION_REDUCERS, String.valueOf(EXCEPTION_REDUCER_MAXIMUM + 1));
+        driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, String.valueOf(EXCEPTION_REDUCER_MAXIMUM + 1));
         driver.getConfiguration().set(MRJobConfig.NUM_REDUCES, String.valueOf(NORMAL_REDUCER_MAXIMUM + EXCEPTION_REDUCER_MAXIMUM + 2));
         partitioner = new ExceptionPartitioner();
         partitioner.setConf(driver.getConfiguration());
@@ -42,7 +43,7 @@ public class ExceptionPartitionerTest {
 
     @Test
     public void testExceptionCase() {
-        int result = partitioner.getPartition(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("1"), NORMAL_REDUCER_MAXIMUM + EXCEPTION_REDUCER_MAXIMUM + 2);
+        int result = partitioner.getPartition(new Text(ExceptionPartitioner.EXCEPTION_KEY_VALUE), new Text("1"), NORMAL_REDUCER_MAXIMUM + EXCEPTION_REDUCER_MAXIMUM + 2);
         LOGGER.info("Exception Case result: " + result);
         Assert.assertFalse(result <= NORMAL_REDUCER_MAXIMUM);
     }

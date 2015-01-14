@@ -19,7 +19,9 @@ public class IdentityReducer extends Reducer<Text,Text,NullWritable,Text>{
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        LOGGER.info("Reduce key: " + key.toString());
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Reduce key: " + key.toString());
+        }
         for(Text t : values) {
             context.getCounter(MorphlinesMRCounters.COUNTERGROUP, MorphlinesMRCounters.Reducer.COUNTER_INPUTTOTAL).increment(1L);
             context.write(NullWritable.get(),t);

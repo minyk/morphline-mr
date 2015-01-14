@@ -282,7 +282,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         if(job.isSuccessful()) {
             LOGGER.info("Job Status: Successful.");
-            bw.write("Job Status: Successful.");
+            bw.write("Job Status: Successful.\n");
             CounterGroup counterGroup = job.getCounters().getGroup(MorphlinesMRCounters.COUNTERGROUP);
             String groupname = counterGroup.getDisplayName();
             for(Counter c : counterGroup) {

@@ -3,9 +3,14 @@ package com.github.minyk.morphlinesmr.mapper;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+
 import com.github.minyk.morphlinesmr.MRJobConfig;
 import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -25,7 +30,13 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        File morphLineFile = new File(context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_FILE));
+
+        Path[] paths = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+        for(Path path : paths) {
+            LOGGER.info("Cache: " + path.toString());
+        }
+
+        File morphLineFile = new File(paths[0].toString());
         String morphLineId = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_ID);
         MapperRecordEmitter recordEmitter = new MapperRecordEmitter(context);
         MorphlineContext morphlineContext = new MorphlineContext.Builder().build();

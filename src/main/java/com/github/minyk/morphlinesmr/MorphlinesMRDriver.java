@@ -265,6 +265,9 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
+        bw.write("------------------------------------------------\n");
+        bw.write("Job ends at ");
+        bw.write(DateTime.now().toString() + "\n");
         //bw.write(content);
 
         LOGGER.info("Job Name: " + job.getJobName());
@@ -279,10 +282,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         if(job.isSuccessful()) {
             LOGGER.info("Job Status: Successful.");
-            bw.write("Job Status: Successful at ");
-            bw.write(DateTime.now().toString() + "\n");
-
-
+            bw.write("Job Status: Successful.");
             CounterGroup counterGroup = job.getCounters().getGroup(MorphlinesMRCounters.COUNTERGROUP);
             String groupname = counterGroup.getDisplayName();
             for(Counter c : counterGroup) {

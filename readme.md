@@ -26,14 +26,15 @@ $ yarn jar target/morphline-mr-*-jar-with-dependencies.jar -f morphline_with_exc
 
 ## Options
 
-- "-f" or "--morphline-file" indicates which mophline configuration file is used for.
-- "-m" or "--morphlie-id" indicates target morphline id in the configuration file. 
-- "-i" or "--input" the input file or directory location.
-- "-o" or "--output" the output directory location.
+- "-f" or "--morphline-file" indicates which mophline configuration file is used for. Required.
+- "-m" or "--morphlie-id" indicates target morphline id in the configuration file. Required.
+- "-i" or "--input" the input file or directory location. Required.
+- "-o" or "--output" the output directory location. Required.
+- "-e" or "--exception" the exceptiondirectory location. 
 - "-r" or "--use-reducer" if this option is declared, the job uses exception partitioner and reducers. Default is false.
 - "-n" or "--total-reducers" describes total number of reducers. Default is 10 reducers.
-- "-e" or "--exception-reducers" describes total number of reducers for exception cases. Default is 2.
-- "-j" or "--job-name" the name of the job. Default is "Data_Cleaning_Job".
+- "-x" or "--exception-reducers" describes total number of reducers for exception cases. Default is 2.
+- "-j" or "--job-name" the name of the job. Default is "Data\_Cleaning\_Job".
 - "-l" or "--local-mode" Use local mode instead of YARN(MRv2) or Classic(MRv1). Use this option for testing purpose.
 - "-g" or "--ganglia" for the ganglia server to report metrics. It can be mutlicast ip.
 

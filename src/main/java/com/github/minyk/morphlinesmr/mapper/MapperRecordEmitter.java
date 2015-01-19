@@ -1,6 +1,7 @@
 package com.github.minyk.morphlinesmr.mapper;
 
 import com.github.minyk.morphlinesmr.counter.MorphlinesMRCounters;
+import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -39,7 +40,7 @@ public class MapperRecordEmitter implements Command {
         output_value.set(record.get("value").get(0).toString());
         try {
             context.write(output_key, output_value);
-            if(output_key.toString().equals(MorphlinesMapper.EXCEPTION_KEY_FIELD)) {
+            if(output_key.toString().startsWith(ExceptionPartitioner.EXCEPTION_KEY_VALUE)) {
                 exception.increment(1L);
             } else {
                 normal.increment(1L);

@@ -42,7 +42,7 @@ public class ExceptionPartitionerTest {
 
     @Test
     public void testExceptionCase() {
-        int result = partitioner.getPartition(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("1"), NORMAL_REDUCER_MAXIMUM + EXCEPTION_REDUCER_MAXIMUM + 2);
+        int result = partitioner.getPartition(new Text(ExceptionPartitioner.EXCEPTION_KEY_VALUE), new Text("1"), NORMAL_REDUCER_MAXIMUM + EXCEPTION_REDUCER_MAXIMUM + 2);
         LOGGER.info("Exception Case result: " + result);
         Assert.assertFalse(result <= NORMAL_REDUCER_MAXIMUM);
     }

@@ -15,14 +15,14 @@ import java.util.Date;
 public class ExceptionPartitioner extends HashPartitioner<Text, Text> implements Configurable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionPartitioner.class);
-    public static final String EXCEPTION_KEY="__EXCEPTION__";
+    public static final String EXCEPTION_KEY_VALUE ="__EXCEPTION__";
     public static final String EXCEPRION_REDUCERS="morphline-mr.exception.reducers";
     private Configuration conf;
     private int exception_reducers;
 
     @Override
     public int getPartition(Text key, Text value, int i) {
-        if(key.toString().contains(EXCEPTION_KEY)) {
+        if(key.toString().startsWith(EXCEPTION_KEY_VALUE)) {
             if(LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception Record: " + value.toString());
             }
@@ -31,8 +31,8 @@ public class ExceptionPartitioner extends HashPartitioner<Text, Text> implements
              * 1. Use UTC milliseconds as a partition key OR
              * 2. Use string from morpline as a partition key
              */
-            if(key.getLength() > EXCEPTION_KEY.length()) {
-                key.set(key.toString().substring(EXCEPTION_KEY.length()-1, key.getLength()));
+            if(key.getLength() > EXCEPTION_KEY_VALUE.length()) {
+                key.set(key.toString().substring(EXCEPTION_KEY_VALUE.length()-1, key.getLength()));
             } else {
                 key.set(String.valueOf(new Date().getTime()));
             }

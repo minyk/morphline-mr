@@ -28,7 +28,7 @@ public class MorphlinesMapperTest {
         mapDriver.addCacheFile(file.toURI());
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID, "morphline1");
-        mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);
+        mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY_VALUE);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class MorphlinesMapperTest {
     public void testExceptionCase() {
         mapDriver.clearInput();
         mapDriver.withInput(new LongWritable(0), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
-        mapDriver.withOutput(new Text(ExceptionPartitioner.EXCEPTION_KEY), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
+        mapDriver.withOutput(new Text(ExceptionPartitioner.EXCEPTION_KEY_VALUE), new Text("<>Feb  4 10:46:14 syslog sshd[607]: listening on 0.0.0.0 port 22."));
         try {
             mapDriver.runTest();
         } catch (IOException e) {

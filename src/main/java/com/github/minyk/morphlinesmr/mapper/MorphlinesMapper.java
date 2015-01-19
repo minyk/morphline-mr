@@ -56,7 +56,7 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
             LOGGER.debug("Value: " + value.toString());
         }
         if(useReducers) {
-            record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY);
+            record.put(EXCEPTION_KEY_FIELD, ExceptionPartitioner.EXCEPTION_KEY_VALUE);
         }
 
         if (!morphline.process(record)) {

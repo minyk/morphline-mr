@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -20,13 +21,14 @@ public class MorphlineMRExceptionTest {
     MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text> driver;
 
     @Before
-    public void setUp() {
+    public void setUp() throws URISyntaxException {
         MorphlinesMapper mapper = new MorphlinesMapper();
         IdentityReducer reducer = new IdentityReducer();
         ExceptionPartitioner partitioner = new ExceptionPartitioner();
         driver = new MapReduceDriver<LongWritable, Text, Text, Text, NullWritable, Text>(mapper, reducer);
 
         URL file = MorphlineMRExceptionTest.class.getClassLoader().getResource("morphline_with_exception.conf");
+        driver.addCacheFile(file.toURI());
         driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
         driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID,"morphline1");
     }

@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 
@@ -20,10 +21,11 @@ public class MorphlinesMapperTest {
     MapDriver<LongWritable, Text, Text, Text> mapDriver;
 
     @Before
-    public void setUp() {
+    public void setUp() throws URISyntaxException {
         MorphlinesMapper mapper = new MorphlinesMapper();
         mapDriver = MapDriver.newMapDriver(mapper);
         URL file = MorphlinesMapperTest.class.getClassLoader().getResource("morphline_with_exception.conf");
+        mapDriver.addCacheFile(file.toURI());
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID, "morphline1");
         mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY);

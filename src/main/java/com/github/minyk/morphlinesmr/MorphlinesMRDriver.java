@@ -271,7 +271,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             file.createNewFile();
         }
 
-        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        FileWriter fw = new FileWriter(file.getAbsoluteFile(),true);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write("------------------------------------------------\n");
         bw.write("Job ends at ");

@@ -6,7 +6,7 @@
     <groupId>morphlines-mr</groupId>
     <artifactId>morphlines-mr</artifactId>
     <packaging>jar</packaging>
-    <version>0.3</version>
+    <version>0.4-hadoop2</version>
 
     <properties>
         <kite-version>0.17.0</kite-version>
@@ -122,6 +122,66 @@
             <artifactId>kite-morphlines-all</artifactId>
             <version>${kite-version}</version>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-cell</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-solrj</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tika</groupId>
+                    <artifactId>tika-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tika</groupId>
+                    <artifactId>tika-parsers</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tika</groupId>
+                    <artifactId>tika-xmp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-solr-cell</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-solr-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-tika-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-tika-decompress</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-hadoop-parquet-avro</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-hadoop-rcfile</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kitesdk</groupId>
+                    <artifactId>kite-morphlines-hadoop-sequencefile</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.7</version>
         </dependency>
 
         <dependency>

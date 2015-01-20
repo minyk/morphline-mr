@@ -95,7 +95,9 @@ public class MorphlinesJob extends Job {
         if (counters != null) {
             LOG.info(counters.toString());
         }
-        gangliaMetricClean();
+        if(reportGanglia) {
+            gangliaMetricClean();
+        }
         return success;
     }
 

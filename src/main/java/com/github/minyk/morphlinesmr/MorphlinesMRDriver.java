@@ -163,7 +163,7 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         // Make Job obj.
         MorphlinesJob job;
 
-        if(!config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK).isEmpty()) {
+        if(!config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK,"").isEmpty()) {
             String ganglia_server = config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK);
             LOGGER.info("Use ganglia: " + ganglia_server);
             if(ganglia_server.contains(":")) {

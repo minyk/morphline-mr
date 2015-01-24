@@ -223,6 +223,14 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         try {
             if(fs.exists(outputPath)) {
                 fs.delete(outputPath, true);
+                LOGGER.info("Existing output path deleted: " + outputPath.toUri().getPath());
+            }
+            if(cmd.hasOption('e')) {
+                Path exceptionPath = new Path(conf.get(MorphlinesMRConfig.EXCEPTION_PATH));
+                if(fs.exists(exceptionPath)) {
+                    fs.delete(exceptionPath, true);
+                    LOGGER.info("Existing exception path deleted: "+ exceptionPath.toUri().getPath());
+                }
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

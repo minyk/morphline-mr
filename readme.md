@@ -40,7 +40,7 @@ $ yarn jar target/morphline-mr-*-jar-with-dependencies.jar -f morphline_with_exc
 
 ## Map only job
 
-If one of 'r' or 'n' or 'e' option are not provided, the driver run map-only job. In this case, unparsable records should be dropped with dropRecord command. 
+If one of 'r' or 'n' or 'e' options are not provided, the driver run map-only job. In this case, unparsable records should be dropped with dropRecord command.
 
 ## How to use Exception Partitioner
 

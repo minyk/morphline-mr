@@ -76,16 +76,12 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         local.setRequired(false);
         opts.addOption(local);
 
-        Option dictionaries = new Option("d", "grok-dictionaries", true, "grok dictionaries.");
-        dictionaries.setRequired(false);
-        opts.addOption(dictionaries);
-
         Option counters = new Option("c", "save-counters", true, "Local path to save counters.");
         counters.setRequired(false);
         opts.addOption(counters);
 
         Option ganglia = new Option("g", "ganglia", true, "ganglia gmeta server.");
-        dictionaries.setRequired(false);
+        ganglia.setRequired(false);
         opts.addOption(ganglia);
 
         return opts;

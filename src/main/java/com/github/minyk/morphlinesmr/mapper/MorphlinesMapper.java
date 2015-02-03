@@ -29,6 +29,7 @@ public class MorphlinesMapper extends Mapper<LongWritable, Text, Text, Text> {
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
         String confName = FilenameUtils.getName(context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_FILE));
+//        String confName = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_FILE); //for test
         morphLineFile = new File(confName);
         String morphLineId = context.getConfiguration().get(MorphlinesMRConfig.MORPHLINE_ID);
         MapperRecordEmitter recordEmitter = new MapperRecordEmitter(context);

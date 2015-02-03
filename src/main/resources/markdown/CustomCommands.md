@@ -16,7 +16,6 @@ Morphline-MR Custom Commands
 {
    writeCSV {
       delimiter : ","
-      quoteCharacter : "'"
       inputs :
       output : output
    }
@@ -24,7 +23,6 @@ Morphline-MR Custom Commands
 ```
 
 * delimiter : delimiter of each columns
-* quoteCharacter : quote char for formatting
 * inputs : field names
 * output : output field name
 

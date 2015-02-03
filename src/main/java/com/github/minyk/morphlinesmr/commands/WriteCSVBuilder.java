@@ -43,7 +43,6 @@ public final class WriteCSVBuilder implements CommandBuilder {
         protected WriteCSV(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) {
             super(builder, config, parent, child, context);
             char delimiter = getConfigs().getString(config, "delimiter", ",").charAt(0);
-            String quoteString = getConfigs().getString(config, "quoteCharacter", "");
             input_fields = getConfigs().getStringList(config,"inputs");
             input_size = input_fields.size();
 
@@ -51,11 +50,7 @@ public final class WriteCSVBuilder implements CommandBuilder {
             LOG.info("Input Fields Size: " + input_size);
 
             output_field = getConfigs().getString(config,"output", "output");
-            if(quoteString.length() > 0) {
-                csvStrategy = new CSVStrategy(delimiter, quoteString.charAt(0), '#', false, false);
-            } else {
-                csvStrategy = new CSVStrategy(delimiter, "'".charAt(0), '#', false, false);
-            }
+            csvStrategy = new CSVStrategy(delimiter, '"', '#', false, false);
 
             sw = new StringWriter();
             CSVWriterBuilder<String[]> csvWriterBuilder = new CSVWriterBuilder<String[]>(sw);

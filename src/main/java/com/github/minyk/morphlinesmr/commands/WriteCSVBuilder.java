@@ -39,15 +39,14 @@ public final class WriteCSVBuilder implements CommandBuilder {
         private final String output_field;
         private final List<String> input_fields;
         private final int input_size;
+        private final String[] results;
 
         protected WriteCSV(CommandBuilder builder, Config config, Command parent, Command child, MorphlineContext context) {
             super(builder, config, parent, child, context);
             char delimiter = getConfigs().getString(config, "delimiter", ",").charAt(0);
             input_fields = getConfigs().getStringList(config,"inputs");
             input_size = input_fields.size();
-
-            LOG.info("Input Fields: " + input_fields.toString());
-            LOG.info("Input Fields Size: " + input_size);
+            results = new String[input_size];
 
             output_field = getConfigs().getString(config,"output", "output");
             csvStrategy = new CSVStrategy(delimiter, '"', '#', false, false);
@@ -61,7 +60,6 @@ public final class WriteCSVBuilder implements CommandBuilder {
 
         @Override
         protected boolean doProcess(Record record) {
-            String[] results = new String[input_size];
             for (int i=0; i < input_size; i++) {
                 results[i] = (String) record.getFirstValue(input_fields.get(i));
             }

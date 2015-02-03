@@ -34,7 +34,7 @@ public final class WriteCSVBuilder implements CommandBuilder {
     private static final class WriteCSV extends AbstractCommand {
 
         private final CSVStrategy csvStrategy;
-        private final CSVWriter csvWriter;
+        private final CSVWriter<String[]> csvWriter;
         private final StringWriter sw;
         private final String output_field;
         private final List<String> input_fields;

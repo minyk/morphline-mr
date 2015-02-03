@@ -6,6 +6,8 @@ package com.github.minyk.morphlinesmr;
 public class MorphlinesMRConfig {
 
     public static final String MORPHLINE_FILE = "morphlines-mr.conf.filename";
+    public static final String MORPHLINE_FILE_TEST = "morphlines-mr.conf.filename.test";
+
     public static final String MORPHLINE_ID = "morphlines-mr.conf.morphlineid";
 
     public static final String CONF_DIR = "morphlines-mr.dirs.confs";

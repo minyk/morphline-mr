@@ -30,6 +30,7 @@ public class MorphlineMRExceptionTest {
         URL file = MorphlineMRExceptionTest.class.getClassLoader().getResource("morphline_with_exception.conf");
         driver.addCacheFile(file.toURI());
         driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
+        driver.getConfiguration().setBoolean(MorphlinesMRConfig.MORPHLINE_FILE_TEST, true);
         driver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID,"morphline1");
     }
 

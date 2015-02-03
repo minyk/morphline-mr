@@ -26,7 +26,8 @@ public class MorphlinesMapperCSVTest {
         mapDriver = MapDriver.newMapDriver(mapper);
         URL file = MorphlinesMapperCSVTest.class.getClassLoader().getResource("morphline_writecsv.conf");
         mapDriver.addCacheFile(file.toURI());
-        mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
+        mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE, file.getPath());
+        mapDriver.getConfiguration().setBoolean(MorphlinesMRConfig.MORPHLINE_FILE_TEST, true);
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID, "morphline1");
     }
 

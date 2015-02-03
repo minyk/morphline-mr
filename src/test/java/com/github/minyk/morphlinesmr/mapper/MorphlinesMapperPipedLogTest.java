@@ -28,6 +28,7 @@ public class MorphlinesMapperPipedLogTest {
         URL file = MorphlinesMapperTest.class.getClassLoader().getResource("morphline_pipedlog.conf");
         mapDriver.addCacheFile(file.toURI());
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_FILE,file.getPath());
+        mapDriver.getConfiguration().setBoolean(MorphlinesMRConfig.MORPHLINE_FILE_TEST, true);
         mapDriver.getConfiguration().set(MorphlinesMRConfig.MORPHLINE_ID, "morphline1");
         mapDriver.getConfiguration().set("exceptionkey", ExceptionPartitioner.EXCEPTION_KEY_VALUE);
     }

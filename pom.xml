@@ -6,11 +6,11 @@
     <groupId>morphlines-mr</groupId>
     <artifactId>morphlines-mr</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.1-hadoop2</version>
+    <version>0.5.0-hadoop2</version>
 
     <properties>
-        <kite-version>0.17.0</kite-version>
-        <hadoop-version>2.5.1</hadoop-version>
+        <kite-version>0.18.0</kite-version>
+        <hadoop-version>2.6.0</hadoop-version>
     </properties>
 
 

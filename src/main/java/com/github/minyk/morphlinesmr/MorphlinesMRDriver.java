@@ -6,6 +6,7 @@ import com.github.minyk.morphlinesmr.mapper.IgnoreKeyOutputFormat;
 import com.github.minyk.morphlinesmr.mapper.MorphlinesMapper;
 import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
 import com.github.minyk.morphlinesmr.reducer.IdentityReducer;
+import com.google.common.base.Preconditions;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import org.apache.commons.cli.*;
 import org.apache.commons.cli.Options;
@@ -37,19 +38,19 @@ public class MorphlinesMRDriver extends Configured implements Tool {
     private Options buildOption() {
         Options opts = new Options();
         Option mfile = new Option("f", "morphline-file", true, "target morphline file. Required.");
-        mfile.setRequired(true);
+        mfile.setRequired(false);
         opts.addOption(mfile);
 
         Option mid = new Option("m", "morphlie-id", true, "target morphline id in the file. Required.");
-        mid.setRequired(true);
+        mid.setRequired(false);
         opts.addOption(mid);
 
         Option input = new Option("i", "input", true, "input location. Required.");
-        input.setRequired(true);
+        input.setRequired(false);
         opts.addOption(input);
 
         Option output = new Option("o", "output", true, "output location. Required.");
-        output.setRequired(true);
+        output.setRequired(false);
         opts.addOption(output);
 
         Option exception = new Option("e", "exception", true, "exception location");
@@ -90,19 +91,20 @@ public class MorphlinesMRDriver extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
 
-        if(args.length < 1) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("yarn jar morphlines-mr.jar",buildOption());
-            ToolRunner.printGenericCommandUsage(System.out);
-            System.exit(1);
-        }
-
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(buildOption(), args, true);
 
         Configuration config = this.getConf();
 
         // Load conf from command line.
+        if(cmd.hasOption('f')) {
+            config.set(MorphlinesMRConfig.MORPHLINE_FILE, cmd.getOptionValue('f'));
+        }
+
+        if(cmd.hasOption('m')) {
+            config.set(MorphlinesMRConfig.MORPHLINE_ID, cmd.getOptionValue('m'));
+        }
+
         if(cmd.hasOption('i')) {
             config.set(MorphlinesMRConfig.INPUT_PATH, cmd.getOptionValue('i'));
         }
@@ -127,13 +129,6 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             config.set(MorphlinesMRConfig.JOB_NAME, cmd.getOptionValue('j'));
         }
 
-        if(cmd.hasOption('f')) {
-            config.set(MorphlinesMRConfig.MORPHLINE_FILE, cmd.getOptionValue('f'));
-        }
-
-        if(cmd.hasOption('m')) {
-            config.set(MorphlinesMRConfig.MORPHLINE_ID, cmd.getOptionValue('m'));
-        }
 
         if(cmd.hasOption('g')) {
             config.set(MorphlinesMRConfig.METRICS_GANGLAI_SINK, cmd.getOptionValue('g'));
@@ -155,6 +150,10 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         if(cmd.hasOption('c')) {
             config.set(MorphlinesMRConfig.COUNTER_PATH, cmd.getOptionValue('c'));
         }
+
+        // Validate conf before start
+
+        validateConf(config);
 
         // Make Job obj.
         MorphlinesJob job;
@@ -328,6 +327,13 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         } finally {
             fs.close();
         }
+    }
+
+    private void validateConf(Configuration conf) throws Exception  {
+        Preconditions.checkNotNull(conf.get(MorphlinesMRConfig.MORPHLINE_FILE), "Error: " + MorphlinesMRConfig.MORPHLINE_FILE + " should be set by hadoop common option or -f option.");
+        Preconditions.checkNotNull(conf.get(MorphlinesMRConfig.MORPHLINE_ID), "Error: " + MorphlinesMRConfig.MORPHLINE_ID + " should be set by hadoop common option or -m option.");
+        Preconditions.checkNotNull(conf.get(MorphlinesMRConfig.INPUT_PATH), "Error: " + MorphlinesMRConfig.INPUT_PATH + " should be set by hadoop common option or -i option.");
+        Preconditions.checkNotNull(conf.get(MorphlinesMRConfig.OUTPUT_PATH), "Error: " + MorphlinesMRConfig.OUTPUT_PATH + " should be set by hadoop common option or -o option.");
     }
 
 }

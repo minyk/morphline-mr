@@ -38,6 +38,10 @@ $ yarn jar target/morphline-mr-*-jar-with-dependencies.jar -f morphline_with_exc
 - "-l" or "--local-mode" Use local mode instead of YARN(MRv2) or Classic(MRv1). Use this option for testing purpose.
 - "-g" or "--ganglia" for the ganglia server to report metrics. It can be mutlicast ip.
 
+### Import options from hadoop common option
+
+See wiki: Import options from hadoop common option page.
+
 ## Map only job
 
 If one of 'r' or 'n' or 'e' options are not provided, the driver run map-only job. In this case, unparsable records should be dropped with dropRecord command.

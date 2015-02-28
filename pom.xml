@@ -9,7 +9,7 @@
     <version>0.5.0-hadoop2</version>
 
     <properties>
-        <kite-version>0.18.0</kite-version>
+        <kite-version>1.0.0</kite-version>
         <hadoop-version>2.6.0</hadoop-version>
     </properties>
 

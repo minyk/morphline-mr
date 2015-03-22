@@ -1,7 +1,7 @@
-package com.github.minyk.morphlinesmr.mapper;
+package com.github.minyk.morphlinesmr.commands;
 
 import com.github.minyk.morphlinesmr.MorphlinesMRConfig;
-import com.github.minyk.morphlinesmr.partitioner.ExceptionPartitioner;
+import com.github.minyk.morphlinesmr.mapper.MorphlinesMapper;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;

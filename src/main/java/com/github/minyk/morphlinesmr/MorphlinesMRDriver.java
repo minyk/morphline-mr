@@ -34,6 +34,8 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MorphlinesMRDriver.class);
     private static final String RESULT_FILE_PREFIX = "part-r-";
+    // Make Job obj.
+    private MorphlinesJob job;
 
     private Options buildOption() {
         Options opts = new Options();
@@ -97,66 +99,83 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         Configuration config = this.getConf();
 
         // Load conf from command line.
-        if(cmd.hasOption('f')) {
+        if (cmd.hasOption('f')) {
             config.set(MorphlinesMRConfig.MORPHLINE_FILE, cmd.getOptionValue('f'));
         }
 
-        if(cmd.hasOption('m')) {
+        if (cmd.hasOption('m')) {
             config.set(MorphlinesMRConfig.MORPHLINE_ID, cmd.getOptionValue('m'));
         }
 
-        if(cmd.hasOption('i')) {
+        if (cmd.hasOption('i')) {
             config.set(MorphlinesMRConfig.INPUT_PATH, cmd.getOptionValue('i'));
         }
 
-        if(cmd.hasOption('o')) {
+        if (cmd.hasOption('o')) {
             config.set(MorphlinesMRConfig.OUTPUT_PATH, cmd.getOptionValue('o'));
         }
 
-        if(cmd.hasOption('e')) {
+        if (cmd.hasOption('e')) {
             config.set(MorphlinesMRConfig.EXCEPTION_PATH, cmd.getOptionValue('e'));
         } else {
             config.set(MorphlinesMRConfig.EXCEPTION_PATH, MorphlinesMRConfig.EXCEPTION_PATH_DEFAULT);
         }
 
-        if(cmd.hasOption('l')) {
+        if (cmd.hasOption('l')) {
             config.set(MorphlinesMRConfig.MORPHLINESMR_MODE, MorphlinesMRConfig.MORPHLIESMR_MODE_LOCAL);
         } else {
             config.set(MorphlinesMRConfig.MORPHLINESMR_MODE, MorphlinesMRConfig.MORPHLIESMR_MODE_MR);
         }
 
-        if(cmd.hasOption('j')) {
+        if (cmd.hasOption('j')) {
             config.set(MorphlinesMRConfig.JOB_NAME, cmd.getOptionValue('j'));
         }
 
 
-        if(cmd.hasOption('g')) {
+        if (cmd.hasOption('g')) {
             config.set(MorphlinesMRConfig.METRICS_GANGLAI_SINK, cmd.getOptionValue('g'));
         }
 
-        if(cmd.hasOption('r')) {
-            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, "10");
-            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, "2");
+        if (cmd.hasOption('r')) {
+            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, String.valueOf(MorphlinesMRConfig.MORPHLINESMR_REDUCERS));
+            config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, String.valueOf(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION));
         }
 
-        if(cmd.hasOption('n')) {
+        if (cmd.hasOption('n')) {
             config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, cmd.getOptionValue('n'));
         }
 
-        if(cmd.hasOption('x')) {
+        if (cmd.hasOption('x')) {
             config.set(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, cmd.getOptionValue('x'));
         }
 
-        if(cmd.hasOption('c')) {
+        if (cmd.hasOption('c')) {
             config.set(MorphlinesMRConfig.COUNTER_PATH, cmd.getOptionValue('c'));
         }
 
+        // Do the Job.
+        int result = dojob(config);
+
+        if(result == 0) {
+            if(cmd.hasOption('c')) {
+                saveJobLogs(job);
+            }
+        }
+
+        return result;
+    }
+
+    public MorphlinesJob run(Configuration conf) throws Exception {
+
+        // Do the Job.
+        dojob(conf);
+
+        return job;
+    }
+
+    private int dojob(Configuration config) throws Exception {
         // Validate conf before start
-
         validateConf(config);
-
-        // Make Job obj.
-        MorphlinesJob job;
 
         if(!config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK,"").isEmpty()) {
             String ganglia_server = config.get(MorphlinesMRConfig.METRICS_GANGLAI_SINK);
@@ -176,6 +195,11 @@ public class MorphlinesMRDriver extends Configured implements Tool {
 
         Configuration conf = job.getConfiguration();
 
+        // Prepare values
+        int normalReducers = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, MorphlinesMRConfig.DEFAULT_MORPHLINESMR_REDUCERS);
+        int exceptionReducers = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, MorphlinesMRConfig.DEFAULT_MORPHLINESMR_REDUCERS_EXCEPTION);
+        int totalReducers = normalReducers + exceptionReducers;
+
         if (conf.get(MorphlinesMRConfig.MORPHLINESMR_MODE).equals(MorphlinesMRConfig.MORPHLIESMR_MODE_LOCAL)) {
             LOGGER.info("Use local mode.");
             conf.set(MRConfig.FRAMEWORK_NAME,MRConfig.LOCAL_FRAMEWORK_NAME);
@@ -187,16 +211,13 @@ public class MorphlinesMRDriver extends Configured implements Tool {
             job.addCacheFile(morphlinefile.toUri());
         }
 
-        if(cmd.hasOption('r') || cmd.hasOption('n') || cmd.hasOption('e')) {
-            int tr = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, 10);
-            int er = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS_EXCEPTION, 2);
-
+        if( normalReducers != 0 || exceptionReducers != 0) {
             LOGGER.info("Use reducers: true");
-            LOGGER.info("Number of total reducers: " + (tr + er));
-            LOGGER.info("Number of exception reducers: " + er);
+            LOGGER.info("Number of total reducers: " + (totalReducers));
+            LOGGER.info("Number of exception reducers: " + exceptionReducers);
 
-            job.setNumReduceTasks((tr+er));
-            job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, er);
+            job.setNumReduceTasks((totalReducers));
+            job.getConfiguration().setInt(ExceptionPartitioner.EXCEPRION_REDUCERS, exceptionReducers);
             job.setReducerClass(IdentityReducer.class);
             job.setPartitionerClass(ExceptionPartitioner.class);
             job.setMapOutputKeyClass(Text.class);
@@ -220,16 +241,9 @@ public class MorphlinesMRDriver extends Configured implements Tool {
                 fs.delete(outputPath, true);
                 LOGGER.info("Existing output path deleted: " + outputPath.toUri().getPath());
             }
-            if(cmd.hasOption('e')) {
-                Path exceptionPath = new Path(conf.get(MorphlinesMRConfig.EXCEPTION_PATH));
-                if(fs.exists(exceptionPath)) {
-                    fs.delete(exceptionPath, true);
-                    LOGGER.info("Existing exception path deleted: "+ exceptionPath.toUri().getPath());
-                }
-            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            System.exit(1);
+            throw e;
         } finally {
             fs.close();
         }
@@ -240,15 +254,10 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         int result = job.waitForCompletion(true) ? 0 : 1;
 
         if(result == 0) {
-            LOGGER.info("tasks : " + job.getNumReduceTasks());
-            if(job.getNumReduceTasks() > 0) {
-               moveExeptions(job);
+            if(exceptionReducers > 0) {
+                moveExeptions(totalReducers, normalReducers);
             }
-          if(cmd.hasOption('c')) {
-              saveJobLogs(job);
-          }
         }
-
 
         return result;
     }
@@ -307,18 +316,21 @@ public class MorphlinesMRDriver extends Configured implements Tool {
         bw.close();
     }
 
-    private void moveExeptions(Job job) throws IOException {
+    private void moveExeptions(int totalReducers, int normalReducers) throws IOException {
         Configuration conf = job.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
-        int totalReducer = job.getNumReduceTasks();
-        int normalReducer = conf.getInt(MorphlinesMRConfig.MORPHLINESMR_REDUCERS, 10);
-        String output_path = conf.get(MorphlinesMRConfig.OUTPUT_PATH);
-        String exception_path = conf.get(MorphlinesMRConfig.EXCEPTION_PATH);
+
+        Path outputPath = new Path(conf.get(MorphlinesMRConfig.OUTPUT_PATH));
+        Path exceptionPath = new Path(conf.get(MorphlinesMRConfig.EXCEPTION_PATH));
         try {
-            fs.mkdirs(new Path(exception_path));
-            for(int i = totalReducer - 1; i > normalReducer - 1; i-- ) {
-                String exceptionOutput = output_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
-                String exceptionFile = exception_path + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
+            if(fs.exists(exceptionPath)) {
+                fs.delete(exceptionPath, true);
+                LOGGER.info("Existing exception path deleted: "+ exceptionPath.toUri().getPath());
+            }
+            fs.mkdirs(exceptionPath);
+            for(int i = totalReducers - 1; i > normalReducers - 1; i-- ) {
+                String exceptionOutput = outputPath.toString() + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
+                String exceptionFile = exceptionPath.toString() + "/" + RESULT_FILE_PREFIX + String.format("%05d", i);
                 fs.rename(new Path(exceptionOutput), new Path(exceptionFile));
             }
 
